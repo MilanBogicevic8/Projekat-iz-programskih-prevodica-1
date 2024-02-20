@@ -1,0 +1,29 @@
+INFO  16:20:48,034 - Compiling source file: C:\pp1domaci\workspace\MJCompiler\test\program.mj
+INFO  16:20:48,588 - #2 program
+INFO  16:20:48,589 - #50 test_303
+INFO  16:20:48,590 - #18 namespace
+INFO  16:20:48,595 - #50 Predmeti
+INFO  16:20:48,597 - #43 {
+INFO  16:20:48,601 - #4 class
+INFO  16:20:48,605 - #50 Predmet
+INFO  16:20:48,605 - #43 {
+INFO  16:20:48,611 - #50 int
+INFO  16:20:48,615 - #50 tezina
+INFO  16:20:48,617 - #35 ;
+INFO  16:20:48,624 - #50 char
+INFO  16:20:48,626 - #50 vrsta
+INFO  16:20:48,627 - #35 ;
+INFO  16:20:48,627 - #43 {
+INFO  16:20:48,631 - #12 void
+INFO  16:20:48,634 - #50 postaviTezinu
+INFO  16:20:48,635 - #39 (
+INFO  16:20:48,636 - #50 int
+INFO  16:20:48,636 - #50 tezina
+INFO  16:20:48,636 - #40 )
+INFO  16:20:48,643 - #43 {
+INFO  16:20:48,646 - #50 this
+INFO  16:20:48,648 - #38 .
+INFO  16:20:48,648 - #50 tezina
+ERROR 16:20:48,649 - 
+Sintaksna greska na liniji 12
+ERROR 16:20:48,649 - Fatalna greska, parsiranje se ne moze nastaviti na liniji 12

@@ -1,0 +1,63 @@
+program MJParser
+namespace milan{
+	const int a=5;
+	{}
+}
+const int a=0,b=2,c=3; int k;
+class nikola extends miki{
+	static int a,b,c,d,e,r,f;
+	static bool m;
+	
+	static{
+		d=0;
+	}
+	
+	static{
+		a=0;
+	}
+	
+	int l;
+	{
+		void milan123(int a, int b)
+		int a;
+		char b;
+	   {
+			//x=a;
+			x=b;
+			a=new int[3];
+			b=5+3;
+			k=m+n*3*k;
+			if(a) break;
+			if(b || c) {
+				
+				continue;
+			}
+			for(;;){}
+			
+			for([k,l,*m]=u,i=0,j=0,a.c=0;A==0;i++){ //[k,l,m]=u,
+				size::a++;
+				size::b=-k;
+				k=k+1;
+			}
+			if(a){
+			}else{
+			}
+			read(a.b);
+			return;
+			return a;
+		}
+	}
+}
+{
+	int milan1234(int a, int b) {
+		
+		if(b || c &&  a && k) break;
+		if(m || n) continue;
+		print(a+b,2);
+		read(b);
+		return;
+    }
+    
+    int milan12345(int a, int b) {
+    }
+}

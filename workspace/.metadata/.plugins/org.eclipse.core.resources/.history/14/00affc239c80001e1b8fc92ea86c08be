@@ -1,0 +1,28 @@
+
+terminal PROG,IDENT,LBRACE,RBRACE,IDENT,SEMI,LPAREN,RPAREN;
+
+noterminal Program,VarDeclList,MethodDeclList,VarDecl,Type,MethodDecl;
+noterminal FormPars, StatementList,FormalParamList;
+
+Program ::= (Program) PROG IDENT VarDeclList LBRACE MethodDeclList RBRACE;
+
+VarDeclList ::= (VarDeclarations) VarDeclList VarDecl
+				|
+				(NoVarDecl)/* epsilon semena,ovo pisemmo radi preglednosti tako*/
+				;
+VarDecl ::= (VarDecl) Type:varType IDENT:varName SEMI;
+
+MethodDeclList ::= (MethodDeclarations) MethodDeclList MethodDecl
+				   |
+				   (NoMethodDecl) /* epsilon */
+				   ;
+MethodDecl ::= (MethodDecl) Type:retType IDENT:methName LPAREN FormPars RPAREN VarDeclList LBRACE StatementList RBRACE;
+
+FormPars ::= (FormParams) FormalParamsList
+			 |
+			 (NoFormParams)/* epsilon */
+			 ;
+FormalParamList ::= (FormalParamDecl) FormalParamList FormalParamDecl
+					|
+					(SingleFormalParam) FormalParamDecl
+					;

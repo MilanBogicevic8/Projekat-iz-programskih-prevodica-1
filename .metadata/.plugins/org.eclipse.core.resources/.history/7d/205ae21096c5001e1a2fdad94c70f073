@@ -1,0 +1,68 @@
+//Test 302
+
+program test302
+
+int i,j;
+bool ibool;
+
+int niz[],niz2[];
+int a,b,c,d, curr;
+
+{
+	
+	
+	bool verify() {
+		print('v');
+		return false;
+	}	
+	
+	void main()
+	{
+	
+		niz2=new int[5];
+		niz2[10]=4;
+		i=4;
+		do{
+			i--;
+			print(i);
+			if(i==1){
+				break;
+			}
+			
+			j=5;
+			do{
+				j--;
+				print(j);
+			}while(j>0);
+				
+		}while(i>0);
+		
+		
+		
+		print(i);
+		print('a');
+		niz2=new int[4];
+		niz=new int[8];
+		
+		niz[0]=1;
+		niz[1]=2;
+		niz[2]=3;
+		niz[3]=4;
+		niz[4]=5;
+		niz[5]=6;
+		
+		//niz[0]=niz[1]*niz[1];
+		//print(niz[0]);
+		//i=niz.max()*niz.max();
+		//print(i);
+		if(niz[0]==2){
+			print(2);
+		}else if(niz[0]==1){
+			print(1);
+		}else{
+			print(3);
+		}
+		
+		
+	}
+}

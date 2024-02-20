@@ -1,0 +1,634 @@
+
+
+package rs.ac.bg.etf.pp1;
+
+import java_cup.runtime.*;
+import org.apache.log4j.*;
+import rs.ac.bg.etf.pp1.ast.*;
+
+parser code {:
+	
+	boolean errorDetected;
+	
+	Logger log = Logger.getLogger(getClass());
+   
+   
+    // slede redefinisani metodi za prijavu gresaka radi izmene teksta poruke
+     
+    public void report_fatal_error(String message, Object info) throws java.lang.Exception {
+      done_parsing();
+      report_error(message, info);
+    }
+  
+    public void syntax_error(Symbol cur_token) {
+        report_error("\nSintaksna greska", cur_token);
+    }
+  
+    public void unrecovered_syntax_error(Symbol cur_token) throws java.lang.Exception {
+        report_fatal_error("Fatalna greska, parsiranje se ne moze nastaviti", cur_token);
+    }
+
+    public void report_error(String message, Object info) {
+    	errorDetected = true;
+    	StringBuilder msg = new StringBuilder(message); 
+    	if (info instanceof Symbol)
+            msg.append (" na liniji ").append(((Symbol)info).left);
+        log.error(msg.toString());
+    }
+
+
+:}
+
+init with {:
+	errorDetected = false;
+:}
+
+scan with {:
+	Symbol s = this.getScanner().next_token();
+	if (s != null && s.value != null) 
+		log.info(s.toString() + " " + s.value.toString());
+	return s;
+:}
+
+terminal PROGRAM, BREAK, CLASS, ELSE, CONST, IF, NEW, PRINT, READ, RETURN, VOID, EXTENDS, CONTINUE, THIS, FOR, STATIC, NAMESPACE;
+terminal PLUS, MINUS, MUL, DIV, PERCENT, EQUALS_EQUALS, NOT_EQUALS;
+terminal GT, GTE, LT, LTE, AND, OR, EQUALS, INCREMENT, DECREMENT, SEMICOLON, COLON, COMMA, DOT;
+terminal LPAREN, RPAREN, LSQUARE, RSQUARE, LBRACE, RBRACE, ARROW, MAX, WHILE, FOREACH, DO;
+
+
+terminal Integer NUMCONST;
+terminal String IDENT;
+terminal Boolean BOOLCONST;
+terminal Character CHARCONST;
+
+/*Program,uvod + namespace*/
+nonterminal NamespaceList, Namespace;
+
+/*const decl*/
+nonterminal ConstDeclList, ConstDecl, ConstDeclTail, ConstDeclHead;
+
+/*Type*/
+
+/* var decl*/
+nonterminal VarDecl, NewVarDecl, OptionalVarDeclList;
+nonterminal OptionalMethVarDeclL;
+nonterminal VarDeclClass, OptionalVarDeclListClass;
+nonterminal VarDeclStatic, OptionalVarDeclListStatic;
+nonterminal VarDeclMeth, OptionalVarDeclListMeth;
+/* class decl*/
+nonterminal OptionalStatic, OptionalVarDecl, AdditionalMethodClassDecl, StaticStartDef, StaticEndDef;
+nonterminal ClassBody, ClassMat, ClassUnmat, MethodDeclClassList;
+
+/* method decl */
+nonterminal AdditionalFormPars, MethodDeclList, MethodDeclNamespaceList;
+/*form pars*/
+nonterminal FormPars, OptionalVarDeclList2;
+/*statement*/
+nonterminal Statement, Unmatched, StatementList;
+nonterminal  IfBegin, IfBeginEnd, ElseBegin, AdditionalPrintNum;
+
+
+/*designator statement*/
+nonterminal DesignatorStatement, OrDesStmt, OptionalDesignComma, AdditionalDesign, PomDesAddStek, DesHardStart, DesHardAfter;
+/*designator*/
+nonterminal OrIdentExpr, DesUnmatchFlag, OrIEFlag, DesIdent;
+//nonterminal DesignatorUnmatched;
+/*expr*/
+nonterminal AdditionalMinus, ExprMinusFlag;
+/*term*/
+//nonterminal Term, OptionalTermMulop;
+/*factor*/
+nonterminal AdditionalParentheses, AdditionalActParOp, OrExprActPars, FactorDesignator;
+/*Assignop*/
+nonterminal Assignop;
+/*Mulop*/
+nonterminal Mulop;
+/*ActPars*/
+nonterminal ActPars, OptionalComaExpr, AdditionalActPars, PomExprActPars;
+/*for def*/
+nonterminal AdditionalDesignatoStmtList, OptionalDesignatorStmtL, ForBegin, ForEnd, ForStart, LoopStart, AdditionalDesignatoStmtListAfterFor, ForFlag, ForFlagEnd;
+/*Cond fact*/
+nonterminal AdditionalRelopExpr, AdditionalCondFact;
+/* Relop */
+nonterminal Relop;
+/*Condition*/
+//nonterminal Condition, OptionalCondTerm;
+nonterminal CondOrBegin;
+/*Cond Term*/
+//nonterminal CondTerm, OptionalCondFact;
+/*Addop*/
+nonterminal Addop;
+/*StaticInitializer*/
+nonterminal StaticInitializer, OptionalStaticInitializer;
+/*Label*/
+nonterminal Label;
+
+/*Additional [ident "::"]*/
+nonterminal AdditionalIdent;
+/* mod */
+nonterminal DesMax;
+nonterminal DesignatorI, DesignatorArr, ForModBegin;
+nonterminal WhileBegin;
+nonterminal DoWhileBegin, DoWhileEnd;
+/*neterminali dodati zbog semanticke analize*/
+
+
+
+
+/* objektni cvorovi za ulancavanje (novododati) */
+
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName;
+
+
+/* objektni cvorovi za ulancavanje (prebaceni iz faze sintaksne analize)*/
+
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Program, AdditionalSquare, ClassDecl, ClassDeclBegin, TypeOrVoid, MethodDecl;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Designator, OptionalDesignatorOpp, DesignatorMatched, DesPom, MethodDeclClass;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj NamespaceBegin, DesignatorUnmatched, MethodDeclNamespace, CuvarObjektaKlase;
+
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ForVar, ForArrayMod;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj DesignatorFE, FeVar;
+
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, ConstType, AdditionalExtends, Matched, AdditionalExpr;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Term, OptionalTermMulop, Expr, Factor, OptionalAddopTerm, CondFact;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct CondTerm, OptionalCondFact, Condition, OptionalCondTerm;
+precedence left ELSE;
+precedence right DOT;
+
+
+
+
+
+
+Program ::= (Program) PROGRAM ProgName:p NamespaceList ConstDeclList LBRACE MethodDeclList RBRACE;
+
+ProgName ::= (ProgName) IDENT:progName;
+
+/****                      NAMESPACE                               ***/
+NamespaceList ::= (NameSpaceL) NamespaceList Namespace
+				  |
+				  (NoNameSpaceL) /*epsilon*/
+				  ;
+NamespaceBegin ::= (NamespaceBegin) NAMESPACE IDENT:name;
+
+Namespace ::= (Namespace) NamespaceBegin LBRACE ConstDeclList LBRACE MethodDeclList RBRACE RBRACE;
+
+
+/***                    ALL CONSTS                                 ***/
+ConstDeclList ::= (ConstDeclL) ConstDeclList ConstDecl
+				  |
+				  (VarDeclL) ConstDeclList VarDecl
+				  |
+				  (ClassDeclL) ConstDeclList ClassDecl
+				  |
+				  (NoConstDeclL) /*epsilon*/
+				  ;
+				  
+/***                            CONST DECL                         ***/
+ConstDecl ::= (ConstDecl) CONST Type IDENT:name EQUALS ConstType ConstDeclTail SEMICOLON;
+
+		  
+ConstDeclTail ::= (ConstDeclT)ConstDeclTail COMMA ConstDeclHead
+				|
+				(ConstDeclH) /*epsilon*/
+				;
+				
+ConstDeclHead ::= (ConstDeclHead) IDENT:name EQUALS ConstType;
+
+ConstType ::= (ConstNum) NUMCONST:val
+			  |
+			  (ConstChar) CHARCONST:val
+			  |
+			  (ConstBool) BOOLCONST:val
+			  ;
+
+				  
+/***                           VAR DECLARATION                     ***/
+
+VarDecl ::= (VarDecl) Type NewVarDecl OptionalVarDeclList SEMICOLON;
+
+NewVarDecl ::= (VarDeclIdent) IDENT:name AdditionalSquare;
+
+AdditionalSquare ::= (AdditionalS) LSQUARE RSQUARE
+					  |
+					  (NoAdditionalS) /*epsilon*/
+					  ;
+
+OptionalVarDeclList ::= (OptionalVarList) OptionalVarDeclList COMMA NewVarDecl
+						|
+						(NoOptionalVarList) /*epsilon*/
+						;
+OptionalMethVarDeclL ::= (OptMethVarDclL) OptionalMethVarDeclL VarDeclMeth
+						 |
+						 (NoOptMethVarDclL) /*epsilon*/
+						 ;
+						 
+						 
+VarDeclClass ::= (VarDeclClass) Type NewVarDecl OptionalVarDeclListClass SEMICOLON;
+OptionalVarDeclListClass ::= (OptionalVarListClass) OptionalVarDeclListClass COMMA NewVarDecl
+						|
+						(NoOptionalVarListClass) /*epsilon*/
+						;
+						
+VarDeclStatic ::= (VarDeclStatic) Type NewVarDecl OptionalVarDeclListStatic SEMICOLON;
+OptionalVarDeclListStatic ::= (OptionalVarListStatic) OptionalVarDeclListStatic COMMA NewVarDecl
+						|
+						(NoOptionalVarListStatic) /*epsilon*/
+						;
+
+VarDeclMeth ::= (VarDeclMeth) Type NewVarDecl OptionalVarDeclListMeth SEMICOLON;
+OptionalVarDeclListMeth ::= (OptionalVarListMeth) OptionalVarDeclListMeth COMMA NewVarDecl
+						|
+						(NoOptionalVarListMeth) /*epsilon*/
+						;			
+
+/***                      CLASS DECL                              ***/
+
+ClassDecl ::= (ClassDeclaration) ClassDeclBegin LBRACE ClassBody RBRACE;
+
+ClassDeclBegin ::= (ClassDeclBegin) CLASS IDENT:name AdditionalExtends;
+
+ClassBody ::= (ClassMatch) ClassMat
+			  |
+			  (ClassUnmatch) ClassUnmat
+			  ;
+ClassMat ::= (ClassM) OptionalStatic OptionalVarDecl AdditionalMethodClassDecl;
+ClassUnmat ::= (ClassU) OptionalStatic OptionalStaticInitializer OptionalVarDecl AdditionalMethodClassDecl;
+
+StaticEndDef ::= (StaticEndDef) /* epsilon*/;
+StaticStartDef ::= (StaticStartDef) /*epsilon*/;
+
+AdditionalExtends ::= (AdditionalExtend) EXTENDS Type:type
+					  |
+					  (NoAdditionalExtend) /*epsilon*/
+					  ;
+OptionalStatic ::= (OptionalStat) OptionalStatic STATIC VarDeclStatic StaticStartDef
+				   |
+				   (NoOptionalStatic) /*epsilon*/ StaticStartDef
+				   ;
+OptionalVarDecl ::= (OptVarDecl) OptionalVarDecl VarDeclClass
+					|
+					(NoOptVarDecl) /*epsilon*/
+					;
+
+AdditionalMethodClassDecl ::= (AddClassMeth) StaticEndDef LBRACE MethodDeclClassList RBRACE
+							  |
+							  (NoAddClassMeth) StaticEndDef /* epsilon*/
+							  ;
+
+/***   						METHOD DECL                            ***/
+
+
+MethodDecl ::= (MethodDecl) TypeOrVoid LPAREN AdditionalFormPars RPAREN OptionalMethVarDeclL LBRACE StatementList RBRACE;
+MethodDeclClass ::= (MethodDeclClass) TypeOrVoid LPAREN AdditionalFormPars RPAREN OptionalMethVarDeclL LBRACE StatementList RBRACE;
+MethodDeclNamespace ::= (MethodDeclNamespace) TypeOrVoid LPAREN AdditionalFormPars RPAREN OptionalMethVarDeclL LBRACE StatementList RBRACE;
+
+TypeOrVoid ::= (TypeOpt) Type IDENT:name
+				|
+				(VoidOpt) VOID IDENT:name
+				;
+AdditionalFormPars ::= (AddFormPars) FormPars
+						|
+						(NoAddFormPars) /* epsilon */
+						;
+
+MethodDeclList ::= (MethDeclL) MethodDeclList MethodDecl
+					|
+					(NoMethDeclL) /*epsilon*/
+					;
+MethodDeclClassList ::= (MethDeclClassL) MethodDeclClassList MethodDeclClass
+						|
+						(NoMethodDeclClassL) /*epsilon*/
+						;
+MethodDeclNamespaceList ::= (MethodDeclNamespaceL) MethodDeclNamespaceList MethodDeclNamespace
+							|
+							(NoMethodDeclNamespaceL) /*epsilon*/
+							;
+		
+/***                         FORM PARS                             ***/
+
+FormPars ::= (FormPars) Type NewVarDecl OptionalVarDeclList2; //razlikuje se od VarDecl samo po ; na kraju
+
+OptionalVarDeclList2 ::= (OptionalVarList2) OptionalVarDeclList2 COMMA Type NewVarDecl
+						|
+						(NoOptionalVarList2) /*epsilon*/
+						;
+/***                         TYPE                                  ***/
+
+Type ::= (TypeOptDoubleColon) IDENT:Nname COLON COLON IDENT:typeName
+		 |
+		 (TypeBaseNoColon) IDENT:typeName
+		 ;
+
+
+/***                        STATEMENT               ***/
+
+Statement ::= (MatchedStmt) Matched
+			  |
+			  (UnmatchedStmt) Unmatched
+			  ;
+
+			  
+Unmatched ::= (IfUnmatched) IF IfBegin Condition IfBeginEnd RPAREN Statement
+			  |
+			  (IfElseUnmatched) IF IfBegin Condition IfBeginEnd RPAREN Matched ElseBegin Unmatched
+			  ;
+
+IfBegin ::= (IfBegin) LPAREN;
+IfBeginEnd ::= (IfBeginEnd) /*epsilon*/;
+ElseBegin ::= (ElseBegin) ELSE;              ///* espilon*/;
+
+Matched ::= (DesStm) DesignatorStatement SEMICOLON
+			|
+			(IfElseMatched) IF IfBegin Condition IfBeginEnd RPAREN Matched ElseBegin Matched
+			|
+			(StmtBreak) BREAK SEMICOLON
+			|
+			(StmtContinue) CONTINUE SEMICOLON
+			|
+			(StmtReturn) RETURN AdditionalExpr SEMICOLON
+			|
+			(StmtRead) READ LPAREN Designator RPAREN SEMICOLON
+			|
+			(StmtPrint) PRINT LPAREN Expr AdditionalPrintNum RPAREN SEMICOLON
+			|
+			(StmtFor) ForBegin Matched ForEnd
+			|
+			(StmtFor2) ForBegin Unmatched ForEnd
+			|
+			(StmtStmt) LBRACE StatementList RBRACE
+			|
+			(ForArr) ForModBegin Matched
+			|
+			(ForArr2) ForModBegin Unmatched
+			|
+			(While) WhileBegin LPAREN Condition RPAREN Matched
+			|
+			(ForeachStmt) DesignatorFE LPAREN FeVar ARROW Statement RPAREN SEMICOLON
+			|
+			(DoWhile1) DoWhileBegin  Statement WHILE LPAREN Condition DoWhileEnd SEMICOLON
+			;
+
+DoWhileBegin ::= (DoWhileBegin) DO;
+DoWhileEnd ::= (DoWhileEnd) RPAREN;
+
+DesignatorFE ::= (DesignatorFE) IDENT:name DOT FOREACH;
+FeVar ::= (FeVar) IDENT:name;
+
+WhileBegin ::= (WhileBegin) WHILE;
+DesignatorI ::= (DesignatorI) IDENT:name;
+DesignatorArr ::= (DesignatorArr) IDENT:name;
+
+ForModBegin ::= (ForModBegin) ForStart LPAREN ForVar ForArrayMod;
+ForVar ::= (ForVar) IDENT: name COLON;
+ForArrayMod ::= (ForArrayMod) IDENT:name RPAREN;
+
+ForBegin ::= (ForBegin)	ForStart LPAREN AdditionalDesignatoStmtList LoopStart SEMICOLON AdditionalCondFact ForFlag SEMICOLON AdditionalDesignatoStmtList ForFlagEnd RPAREN;
+ForEnd ::= (ForEnd) /*epsilon*/;
+
+ForStart ::= (ForStart) FOR;
+LoopStart ::= (LoopStart) /*epsilon*/;
+AdditionalDesignatoStmtListAfterFor ::= (AdditionalDesignatoStmtListAfterFor) AdditionalDesignatoStmtList;
+ForFlag ::= (ForFlag) /*epsilon*/;
+ForFlagEnd ::= (ForFlagEnd) /*epsilon*/;
+
+StatementList ::= (StmtList) StatementList Statement
+				  |
+				  (NoStmtList) /*epsilon*/
+				  ;	   
+
+
+
+AdditionalPrintNum ::= (AddPrintN) COMMA NUMCONST:val
+						|
+						(NoAddPrintN) /*epsilon*/
+						;
+
+/***FOR DEF***/
+
+AdditionalDesignatoStmtList ::= (AddDesStmtL) DesignatorStatement OptionalDesignatorStmtL
+								|
+								(NoAddDesStmtL) /*epsilon*/
+								;
+	
+OptionalDesignatorStmtL ::= (OptDesStmtL) OptionalDesignatorStmtL COMMA DesignatorStatement
+							|
+							(NoOptDesStmtL) /*epsilon*/
+							;
+														
+/***                      DESIGNATOR STATEMENT          ***/
+
+
+DesignatorStatement ::= (DesStmtE) Designator OrDesStmt
+						|
+						(DesStmtH) DesHardStart LSQUARE OptionalDesignComma MUL Designator RSQUARE EQUALS Designator
+						;
+
+DesHardStart ::= (DesHardStart) /*epsilon*/;
+
+OrDesStmt ::= (OrAssignExpr) Assignop Expr
+			  |
+			  (OrActPars) PomDesAddStek LPAREN AdditionalActPars RPAREN
+			  |
+			  (OrIncrement) INCREMENT
+			  |
+			  (OrDecrement) DECREMENT
+			  
+			  ;
+PomDesAddStek ::= (PomDesAddStek) /* epsilon*/;		  
+					
+OptionalDesignComma ::= (OptDesCom) OptionalDesignComma AdditionalDesign COMMA
+						|
+						(NooOptDesCom) /*epsilon*/
+						;
+AdditionalDesign ::= (AdditionalDes) Designator DesHardAfter
+					 |
+					 (NoAdditionalDes) /*epsilon*/
+					 ;
+DesHardAfter ::= (DesHardAfter) /*epsilon*/;
+					 
+/***                      DESIGNATOR                    ***/
+
+
+Designator ::= (DesignatorM) DesignatorMatched
+				|
+				(DesignatorU) DesignatorUnmatched
+			    ;
+
+DesPom ::= (DesPom) IDENT:name;
+DesignatorMatched ::= (DesMatch) DesPom OptionalDesignatorOpp;
+DesignatorUnmatched ::= (DesUnmatch) DesUnmatchFlag DesignatorMatched;
+
+OptionalDesignatorOpp ::= (OptDesignOpp) OptionalDesignatorOpp OrIdentExpr
+						  |
+						  (NoOptDesignOpp) /*epsilon*/
+						  ;
+OrIdentExpr ::= (OrIdent) DOT IDENT:iden
+				|
+				(OrExpr) OrIEFlag LSQUARE Expr RSQUARE
+				|
+			  	(MaxArray) DOT MAX LPAREN RPAREN
+				;	
+OrIEFlag ::= (OrIEFlag) /*epsilon*/;
+DesUnmatchFlag ::= (DesUnmatchFlag) IDENT:name COLON COLON ;
+DesIdent ::= (DesIdent) IDENT:name;
+
+
+/***                      EXPR                        ***/
+
+Expr ::= (Expr) AdditionalMinus Term ExprMinusFlag OptionalAddopTerm;
+
+ExprMinusFlag ::= (ExprMinusFlag) /*epsilon*/;
+AdditionalMinus ::= (AdditMinus) MINUS
+					|
+					(NoAdditMinus) /*epsilon*/
+					;
+OptionalAddopTerm ::= (OptAddTerm) OptionalAddopTerm Addop Term
+					  |
+					  (NoOptAddTerm) /*epsilon*/
+					  ;
+AdditionalExpr ::= (AddExpr) Expr
+					|
+				   (NoAddExpr) /*epsilon*/
+				    ;
+					
+/***                    TERM                          ***/
+
+Term ::= (Term) Factor OptionalTermMulop;
+
+OptionalTermMulop ::= (OptTermMul) OptionalTermMulop Mulop Factor
+					  |
+					  (NoOptTermMul) /*epsilon*/
+					  ;
+					  
+/***                FACTOR                              ***/
+
+FactorDesignator ::= (FactorDesignator) Designator;
+Factor ::= (FactorDesign) FactorDesignator LPAREN AdditionalActParOp RPAREN
+			|
+			(FactorIdent) Designator
+			|
+			(FactorNum) NUMCONST:val
+			|
+			(FactorChar) CHARCONST:val
+			|
+			(FactorBool) BOOLCONST:val
+			|
+			(FactorNew) NEW Type CuvarObjektaKlase OrExprActPars
+			|
+			(FactorExpr) LPAREN Expr RPAREN
+			;
+CuvarObjektaKlase ::= (CuvarObjektaKlase) /*epsilon*/;	
+AdditionalParentheses ::= (AddParen) LPAREN AdditionalActParOp RPAREN
+					|
+					(NoAddParen) /*epsilon*/
+					;
+AdditionalActParOp ::= (AddActPar2) ActPars
+					   |
+					   (NoAddActPar2) /*epsilon*/
+					   ;
+
+OrExprActPars ::= (OrExprop) LSQUARE Expr RSQUARE
+				   |
+				   (OrActPar) LPAREN AdditionalActPars RPAREN
+				   ;
+
+/***                 ASSIGNOPP                     ***/
+
+Assignop ::= (Assignop) EQUALS;		
+
+/***                 MULOP                               ***/
+
+Mulop ::= (MulopMul) MUL
+		   |
+		   (MulopDiv) DIV
+		   |
+		   (MulopPercent) PERCENT
+		   ;
+		   
+/***               ACTPARS                              ***/
+
+PomExprActPars ::= (PomExprActPars) Expr;
+
+ActPars ::= (ActPars) PomExprActPars OptionalComaExpr;
+
+OptionalComaExpr ::= (OptCommaExpr) OptionalComaExpr COMMA PomExprActPars
+					  |
+					  (NoOptCommaExpr) /*epsilon*/
+					  ;
+					  
+AdditionalActPars ::= (AddActPar) ActPars
+					  |
+					  (NoAddActPar) /*epsilon*/
+					  ;
+					  
+/***              COND FACT                               ***/
+CondFact ::= (CondFact) Expr AdditionalRelopExpr;
+
+AdditionalRelopExpr ::= (AddRelopExpr) Relop Expr
+						|
+						(NoAddRelopExpr) /*epsilon*/
+						;
+AdditionalCondFact ::= (AddCondFact) CondFact
+						|
+						(NoAddCondFact) /*epsilon*/
+						;
+						
+/***               RELOP                                 ***/
+
+Relop ::= (RelEqEq) EQUALS_EQUALS
+		  |
+		  (RelNotEq) NOT_EQUALS
+		  |
+		  (RelGrt) GT
+		  |
+		  (RelGrtEq) GTE
+		  |
+		  (RelLt) LT
+		  |
+		  (RelLtEq) LTE
+		  ;
+		  
+/***               CONDITION                             ***/
+Condition ::= (Condition) CondTerm OptionalCondTerm;
+
+OptionalCondTerm ::= (OptCondTerm) OptionalCondTerm  CondOrBegin OR CondTerm
+					  |
+					  (NoOptCondTerm) /*epsilon*/
+					  ;
+CondOrBegin ::= (CondOrBegin) /* epsilon */;
+/***                 COND TERM                          ***/
+CondTerm ::= (CondTerm) CondFact OptionalCondFact;
+
+OptionalCondFact ::= (OptCondFact) OptionalCondFact AND CondFact
+					  |
+					 (NoOptCondFact) /*epsilon*/
+					 ;
+					 
+/***                ADDOP                               ***/
+
+Addop ::= (AddOpPlus) PLUS
+		  |
+		  (AddOpMinus) MINUS
+		  ;
+		  
+/***               STATIC INITIALIZER                    ***/
+
+StaticInitializer ::= (StaticInit) STATIC LBRACE StatementList RBRACE;
+
+OptionalStaticInitializer ::= (OptStatInitialize) OptionalStaticInitializer StaticInitializer
+							   |
+							   (NoOptStatInitialize) StaticInitializer
+							   ;
+
+/***               LABEL                                ***/
+
+Label ::= (Label) IDENT;
+
+/*Additional [ident "::"]*/
+
+AdditionalIdent ::= (AddIdent) COLON COLON
+					|
+					(NoAddIdent) /*epsilon*/
+					;
+		  

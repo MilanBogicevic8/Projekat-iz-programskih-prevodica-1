@@ -1,0 +1,329 @@
+package rs.ac.bg.etf.pp1;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+
+import rs.ac.bg.etf.pp1.ast.*;
+import rs.etf.pp1.mj.runtime.Code;
+import rs.etf.pp1.symboltable.Tab;
+import rs.etf.pp1.symboltable.concepts.Obj;
+import rs.etf.pp1.symboltable.concepts.Scope;
+import rs.etf.pp1.symboltable.concepts.Struct;
+
+public class CodeGenerator extends VisitorAdaptor {
+
+	private int mainPc;
+	public int getMainPc() {
+		return mainPc;
+	}
+	
+	Scope currentScope = Tab.currentScope;
+	/**
+	 * U hes tabeli prosledjenog opsega trazi Obj cvor sa imenom name, pocevsi od
+	 * prosledjenog opsega, pa redom kroz opsege na nizim nivoima. Povratna
+	 * vrednost: - pronadjeni Obj cvor, ako je pretrazivanje bilo uspesno. -
+	 * Tab.noObj objekat, ako je pretrazivanje bilo neuspesno.
+	 */
+	public static Obj find(String name, Scope scope) {
+		Obj resultObj = null;
+		for (Scope s = scope; s != null; s = s.getOuter()) {
+			if (s.getLocals() != null) {
+				resultObj = s.getLocals().searchKey(name);
+				if (resultObj != null)
+					break;
+			}
+		}
+		return (resultObj != null) ? resultObj : Tab.noObj;
+	}
+	
+	/**
+	 * Matched ::= (DesStm) DesignatorStatement SEMICOLON
+			|
+			(IfElseMatched) IF IfBegin Condition IfEpsilon RPAREN Matched ELSE Matched
+			|
+			(StmtBreak) BREAK SEMICOLON
+			|
+			(StmtContinue) CONTINUE SEMICOLON
+			|
+			(StmtReturn) RETURN AdditionalExpr SEMICOLON
+			|
+			(StmtRead) READ LPAREN Designator RPAREN SEMICOLON
+			|
+			(StmtPrint) PRINT LPAREN Expr AdditionalPrintNum RPAREN SEMICOLON
+			|
+			(StmtFor) ForBegin Matched ForEnd
+			|
+			(StmtFor2) ForBegin Unmatched ForEnd
+			|
+			(StmtStmt) LBRACE StatementList RBRACE
+			;
+			
+			AdditionalPrintNum ::= (AddPrintN) COMMA NUMCONST
+						|
+						(NoAddPrintN) \/*epsilon*\/
+						;
+	 */
+	/*********************************PRINT***************************/
+	public void visit(StmtPrint print) {//podrazumeva se da je vrednost vec na steku
+		if(print.getExpr().struct==Tab.intType || print.getExpr().struct==SemanticAnalyzer.booleanType) {
+			Code.put(Code.print);
+		}else if(print.getExpr().struct==Tab.charType) {
+			Code.put(Code.bprint);
+		}else {//boolenantype
+			//err
+		}
+		
+	}
+	
+	public void visit(AddPrintN apn) {
+		StmtPrint pstm=(StmtPrint) apn.getParent();
+		
+		Integer width=apn.getVal();
+		Code.loadConst(width);	
+	}
+	
+	public void visit(NoAddPrintN napn) {
+		StmtPrint stmt=(StmtPrint)napn.getParent();
+		Expr expr=stmt.getExpr();
+		if(expr.struct==Tab.intType) Code.loadConst(5);
+		else if(expr.struct==SemanticAnalyzer.booleanType) Code.loadConst(5);
+		else Code.loadConst(1);
+	}
+	
+	/******************************READ************************************/
+	
+	public void visit(StmtRead read) {
+		Designator des=read.getDesignator();
+		if(des.obj.getType()==Tab.charType) Code.put(Code.bread);
+		else Code.put(Code.read);
+		
+		Code.store(des.obj);//storujemo procitanu vrednost u des.obj
+	}
+	
+	/****************************Global functions****************************/
+	/**
+	 * MethodDecl ::= (MethodDecl) TypeOrVoid LPAREN AdditionalFormPars RPAREN OptionalMethVarDeclL LBRACE StatementList RBRACE;
+	 * TypeOrVoid ::= (TypeOpt) Type IDENT:name
+				|
+				(VoidOpt) VOID IDENT:name
+				;
+	   AdditionalExpr ::= (AddExpr) Expr
+					|
+				   (NoAddExpr) \/*epsilon*\/
+				    ;
+	   
+	 */
+	private Obj currMethod=null;
+	private Boolean returnStmtFound=false;
+	public void initVFP() {
+		
+	}
+	
+	public void visit(TypeOpt to) {
+		to.obj.setAdr(Code.pc);
+		int level=to.obj.getLevel();
+		int argNum=to.obj.getLocalSymbols().size();
+		Code.put(Code.enter);
+		Code.put(level);
+		Code.put(argNum);
+		this.currMethod=to.obj;
+	}
+	
+	public void visit(VoidOpt vo) {
+		vo.obj.setAdr(Code.pc);
+		String name=vo.obj.getName();
+		if("main".equals(name)) {
+			//ovde treba inicijalizovati tableu virtuelnih funkcija
+			this.mainPc=Code.pc;//prva instrukcija koja se izvrsava
+			initVFP();
+		}
+		int level=vo.obj.getLevel();
+		int argNum=vo.obj.getLocalSymbols().size();
+		Code.put(Code.enter);
+		Code.put(level);
+		Code.put(argNum);
+		this.currMethod=vo.obj;
+		
+	}
+	//return stmt
+	public void visit(AddExpr aexpr) {
+		Code.put(Code.exit);
+		Code.put(Code.return_);
+		returnStmtFound=true;
+	}
+	
+    public void visit(MethodDecl md) {
+		if(!returnStmtFound) {
+			Struct mdStruct=md.obj.getType();
+			if(mdStruct==Tab.noType) {
+				//ako je povratna vrednost void i nema return-a OK
+				Code.put(Code.exit);
+				Code.put(Code.return_);
+			}else {
+				//ako je povratna vrednost!=null, a ne vraca se nista
+				//runtime error
+				Code.put(Code.trap);
+				Code.put(1);
+			}
+		}
+		returnStmtFound=false;currMethod=null; 
+	}
+    
+    /***********************EXPR*********************************/
+    /**
+     * 
+     * Expr ::= (Expr) AdditionalMinus Term OptionalAddopTerm;
+
+		AdditionalMinus ::= (AdditMinus) MINUS
+							|
+							(NoAdditMinus) \/*epsilon*\/
+							;
+		OptionalAddopTerm ::= (OptAddTerm) OptionalAddopTerm Addop Term
+							  |
+							  (NoOptAddTerm) \/*epsilon*\/
+							  ;
+		Addop ::= (AddOpPlus) PLUS
+		  |
+		  (AddOpMinus) MINUS
+		  ;
+     */
+    
+    public void visit(AdditMinus am) {
+    	Code.put(Code.neg);
+    }
+    
+    public void visit(OptAddTerm oat) {
+    	if(oat.getAddop() instanceof AddOpPlus) Code.put(Code.add);
+    	else if(oat.getAddop() instanceof AddOpMinus) Code.put(Code.sub);
+    }
+	
+    /************************TERM***************************/
+    /**
+     * Term ::= (Term) Factor OptionalTermMulop;
+
+		OptionalTermMulop ::= (OptTermMul) OptionalTermMulop Mulop Factor
+							  |
+							  (NoOptTermMul) \/*epsilon*\/
+							  ;
+		Mulop ::= (MulopMul) MUL
+		   |
+		   (MulopDiv) DIV
+		   |
+		   (MulopPercent) PERCENT
+		   ;
+		   
+     */
+    
+    public void visit(OptTermMul otm) {
+    	if(otm.getMulop() instanceof MulopMul) Code.put(Code.mul);
+    	else if(otm.getMulop() instanceof MulopDiv) Code.put(Code.div);
+    	else if(otm.getMulop() instanceof MulopPercent) Code.put(Code.rem);
+    }
+    
+    /**********************FACTOR*****************************/
+    /**
+     * FactorDesignator ::= (FactorDesignator) Designator;
+		Factor ::= (FactorDesign) FactorDesignator AdditionalParentheses
+					|
+					(FactorNum) NUMCONST:val
+					|
+					(FactorChar) CHARCONST:val
+					|
+					(FactorBool) BOOLCONST:val
+					|
+					(FactorNew) NEW Type OrExprActPars
+					|
+					(FactorExpr) LPAREN Expr RPAREN
+					;
+	   AdditionalParentheses ::= (AddParen) LPAREN AdditionalActParOp RPAREN
+					|
+					(NoAddParen) \/*epsilon*\/
+					;
+     */
+    
+    public void visit(FactorNum fn) {
+    	//Code.loadConst(fn.getVal());
+    }
+    
+    public void visit(FactorChar fc) {
+    	//Code.loadConst((int)fc.getVal());
+    }
+    
+    public void visit(FactorBool fb) {
+    	//Code.loadConst((fb.getVal()==true)?1:0);
+    }
+    
+    private Stack<Obj> stekPozvanihFunkcija=new Stack<>();//
+    public void visit(FactorDesignator fd) {
+    	//ako se FactorDesign koristi kao ident a ne poziv funkcije
+    	if(((FactorDesign)fd.getParent()).getAdditionalParentheses().getClass()==NoAddParen.class) {
+    		Code.load(fd.getDesignator().obj);
+    	}else {
+    		//ako je poziv funkcije
+    		stekPozvanihFunkcija.push(fd.getDesignator().obj);
+    		//!!!!!!!!!!!!!!!!!!!1Treba jos dodati ovde ako se zove funkcija klase da se doda u listu metoda klase
+    		
+    	}
+    }
+    /*********************************DESIGNATOR STATEMENT*************************/
+    //POZIV FUNKCIJE
+    /**
+     * DesignatorStatement ::= (DesStmtE) Designator OrDesStmt
+						|
+						(DesStmtH) LSQUARE OptionalDesignComma MUL Designator RSQUARE EQUALS Designator
+						;
+
+		OrDesStmt ::= (OrAssignExpr) Assignop Expr
+					  |
+					  (OrActPars) PomDesAddStek LPAREN AdditionalActPars RPAREN
+					  |
+					  (OrIncrement) INCREMENT
+					  |
+					  (OrDecrement) DECREMENT
+					  ;
+	     */
+    public void pozivGlobalneFunkcije(Obj obj) {
+    	String name=obj.getName();
+    	
+    	if(name.equalsIgnoreCase("len")) {
+    		Code.put(Code.arraylength);
+    		return;
+    	}
+    	
+    	if(name.equalsIgnoreCase("ord")) {
+    		return;
+    	}
+    	
+    	if(name.equals("chr")) {
+    		return;
+    	}
+    	
+    	Code.put(Code.call);
+    	//racunanje adrese funkcije
+    	int adr=obj.getAdr();
+    	Code.put2(adr-Code.pc+1);//offset za koliko da se pomerimo da bi stigli na pocetak funkcije
+    }
+    public void visit(DesStmtE dse) {
+    	if(dse.getOrDesStmt().getClass()==OrActPars.class) {
+    		Obj funcDesig=dse.getDesignator().obj;
+    		//treba dodati poziv funkcije za metode!!!!!!!!!!!!!!!!!!!!!
+    		//kad ispravlkjas ovo stavi u else deo
+    		pozivGlobalneFunkcije(funcDesig);
+    		//posto se kod designator statementa povratna vrednost funkcije ne dodeljuje povratnu
+    		//vrednost samo skidamo sa steka
+    		if(dse.getDesignator().obj.getType()!=Tab.noType) {
+    			Code.put(Code.pop);
+    		}
+    		//stekPozvanihFunkcija.pop(); kasnije
+    	}
+    }
+    public void visit(FactorNew fn) {
+    	Code.put(Code.newarray);
+    	if(fn.struct.getElemType()==Tab.charType) Code.put(0);
+    	else Code.put(1);
+    }
+    
+	
+	
+}

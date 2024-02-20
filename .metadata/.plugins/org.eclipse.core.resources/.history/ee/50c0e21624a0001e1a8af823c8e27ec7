@@ -1,0 +1,1032 @@
+package rs.ac.bg.etf.pp1;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Stack;
+
+import org.apache.log4j.Logger;
+import rs.ac.bg.etf.pp1.ast.*;
+import rs.etf.pp1.symboltable.*;
+import rs.etf.pp1.symboltable.concepts.*;
+
+public class SemanticAnalyzer extends VisitorAdaptor {
+
+	public static int nVars;
+	
+	public static Struct booleanType = new Struct(Struct.Bool);
+	
+	boolean errorDetected = false;
+	Logger log=Logger.getLogger(getClass());
+	
+	private HashMap<Struct,String> klase=new HashMap<>();
+	
+	private Struct currType=null;
+	private Struct natklasaTip=null;
+	private String natklasaIme="";
+	private Struct potklasaTip=null;
+	private String potklasaIme="";
+	private String currMethIme="";
+	private Obj currMethType=null;
+	private Obj nadjacanObj=null;
+	private Integer brojParametara=0;
+	private Boolean returnStmt=false;
+	
+	
+	public SemanticAnalyzer() {
+		Tab.currentScope.addToLocals(new Obj(Obj.Type, "bool", booleanType));
+	}
+	
+	
+	public void report_error(String message, SyntaxNode info) {
+		errorDetected = true;
+		StringBuilder msg = new StringBuilder(message);
+		int line = (info == null) ? 0: info.getLine();
+		if (line != 0)
+			msg.append (" na liniji ").append(line);
+		log.error(msg.toString());
+	}
+
+	public void report_info(String message, SyntaxNode info) {
+		StringBuilder msg = new StringBuilder(message); 
+		int line = (info == null) ? 0: info.getLine();
+		if (line != 0)
+			msg.append (" na liniji ").append(line);
+		log.info(msg.toString());
+	}
+	/************************ PROGRAM ******************************/
+	public void visit(ProgName progName) {
+		//obj.vrsta
+		//naziv labele za IDENT programa sto smo stavili u mjparser
+		//tab.type
+		progName.obj=Tab.insert(Obj.Prog, progName.getProgName(), Tab.noType);
+		Tab.openScope();
+	}
+	
+	public void visit(Program program) {
+		nVars = Tab.currentScope.getnVars();
+		Tab.chainLocalSymbols(program.getProgName().obj);
+		Tab.closeScope();
+	}
+	
+	/*********************** TYPE  *************************/
+	public void visit(TypeOptDoubleColon type) {
+		String tip=type.getTypeName();
+		Obj obj=Tab.find(tip);
+		if(obj!=Tab.noObj) {
+			if(obj.getKind()==Obj.Type) {
+				//report_info("Tip: "+tip+" je definisan", type);
+				type.struct=obj.getType();
+				currType=type.struct;
+			}else {
+				report_error("GRESKA:Postoji naziv: "+tip+" u tabeli, ali on ne predstavja tip",type);
+			}
+		}else {
+			report_error("GRESKA:Tip sa name-om: "+tip+" nije definisan u nijednom scope-u.", type);
+		}
+	}
+	
+	public void visit(TypeBaseNoColon type) {
+		String name=type.getTypeName();
+		Obj obj=Tab.find(name);
+		
+		if(obj==Tab.noObj) {
+			report_error("GRESKA:Tip sa name-om: "+name+" nije definisan u nijednom scope-u.", type);
+		}else {
+			if(obj.getKind()==Obj.Type) {
+				//report_info("Tip: "+name+" je definisan", type);
+				type.struct=obj.getType();
+				currType=type.struct;
+			}else {
+				report_error("GRESKA:Postoji naziv: "+name+" u tabeli, ali on ne predstavja tip",type);
+			}
+		}
+	}
+	
+	/************************* PROMENJLJIVE *****************************/
+	//NUMCONST
+	
+	public void visit(ConstNum number) {
+		number.struct=Tab.intType;
+	}
+	
+	//CharConst
+	public void visit(ConstChar charC) {
+		charC.struct=Tab.charType;
+	}
+	
+	//BoolConst
+	public void visit(ConstBool boolC) {
+		boolC.struct=booleanType;// ja sam napravio ovaj simbol i dodao u universe, pa da ne trazim kad je vec lokalno sacuvan
+	}
+	
+	/*Konstavne*/
+	//Provera valjanosti tipa i vrednosti
+	/**
+	 * ConstDecl ::= (ConstDecl) CONST Type IDENT:name EQUALS ConstType ConstDeclTail SEMICOLON;
+	 */
+	public void visit(ConstDecl cnstDecl) {
+		//1. provera da li je konstanta vec deklarisana
+		String name=cnstDecl.getName();
+		Obj obj=Tab.find(name);
+		if(obj!=Tab.noObj) {
+			//greska, promenjljiva je deklarisan vec
+			report_error("GRESKA:Promenjljiva: "+name+" je vec deklarisan!",cnstDecl);
+			return;
+		}
+		
+		//2. provera da li su type i dodeljena vrednost kompatiblni(assignable)
+		
+		Struct type=cnstDecl.getType().struct; //za struct nema geter nego se to dir. dohvata jer je public
+		Struct cnst=cnstDecl.getConstType().struct;
+		//currType=type;
+		
+		if(!cnst.assignableTo(type)) {
+			report_error("GRESKA:Tip i vrednost su nekompatibilni!", cnstDecl);
+			return;
+		}
+		
+		//Sad je sve u redu, ubacujemo konstantu u tabelu simbola
+		
+		Obj objInsert=Tab.insert(Obj.Con,name,type);
+		report_info("Definisana je konstanta: "+name, cnstDecl);
+		
+		ConstType ct = cnstDecl.getConstType();
+    	
+    	if (ct.getClass() == ConstNum.class) {
+    		objInsert.setAdr(((ConstNum) ct).getVal());
+    	} else if (ct.getClass() == ConstChar.class) {
+    		objInsert.setAdr(((ConstChar) ct).getVal());
+    	} else if (ct.getClass() == ConstBool.class) {
+    		objInsert.setAdr(((ConstBool) ct).getVal() == true ? 1 : 0);
+    	}
+		
+	}
+	
+	public void visit(ConstDeclHead cnstDecl) {
+		String name=cnstDecl.getName();
+		Obj obj=Tab.find(name);
+		
+		//1. provera da li je konstanta vec deklarisana
+		if(obj!=Tab.noObj) {
+			//greska, promenjljiva je deklarisan vec
+			report_error("GRESKA:Promenjljiva: "+name+" je vec deklarisan!",cnstDecl);
+			return;
+		}
+		
+		//2. provera da li su type i dodeljena vrednost kompatiblni(assignable)
+		Struct cnstType=cnstDecl.getConstType().struct;
+		
+		if(!cnstType.assignableTo(currType)) {
+			report_error("GRESKA:Tip i vrednost su nekompatibilni!", cnstDecl);
+			return;
+		}
+		
+		Obj objInsert=Tab.insert(Obj.Con,name,cnstType);
+		report_info("Definisana je konstanta: "+name, cnstDecl);
+		
+		ConstType ct = cnstDecl.getConstType();
+    	
+    	if (ct.getClass() == ConstNum.class) {
+    		objInsert.setAdr(((ConstNum) ct).getVal());
+    		//report_info("Definisana je konstanta: "+name+"ADR: "+obj.getAdr(), cnstDecl);
+    	} else if (ct.getClass() == ConstChar.class) {
+    		objInsert.setAdr(((ConstChar) ct).getVal());
+    	} else if (ct.getClass() == ConstBool.class) {
+    		objInsert.setAdr(((ConstBool) ct).getVal() == true ? 1 : 0);
+    	}
+			
+	}
+	
+	/*Vars*/
+	
+	//globalne
+	/**
+	 * VarDecl ::= (VarDecl) Type NewVarDecl OptionalVarDeclList SEMICOLON;
+
+	   NewVarDecl ::= (VarDeclIdent) IDENT:name AdditionalSquare;
+	 */
+	public void visit(VarDecl varDecl) {
+		String name=((VarDeclIdent)varDecl.getNewVarDecl()).getName();
+		Obj obj=Tab.find(name);
+		
+		//ako se promenjljiva sa istim imenom nalazi vec deklarisana ovde, onda je to greska
+		if(obj!=Tab.noObj && Tab.currentScope.findSymbol(name)!=null) {
+			report_error("GRESKA:Globalna promenljiva sa nazivom: "+name+" je vec deklarisana u currentScope-u.",varDecl);
+			return;
+		}
+		
+		String tip=((VarDeclIdent)varDecl.getNewVarDecl()).getAdditionalSquare().obj.getName();
+		if("epsilon".equals(tip)) {
+			report_info("Globalna promenljiva: "+name+" je dodata u tabelu simbola.", varDecl);
+			Tab.insert(Obj.Var, name, currType);
+		}else if("[]".equals(tip)) {
+			report_info("Globalna promenjliva tipa niz: "+name+" je dodata u tableu simbola.",varDecl);
+			Tab.insert(Obj.Var, name, new Struct(Struct.Array,currType));
+		}else {
+			report_error("Desia se greska promenjliva nije ni niz ni obicna.", varDecl);
+		}
+		
+		return;
+	}
+	
+	public void visit(AdditionalS addit) {
+		addit.obj=new Obj(-1, "[]", null);
+	}
+	public void visit(NoAdditionalS noAddit) {
+		noAddit.obj=new Obj(-1,"epsilon",null);
+	}
+	
+	/**
+	 * 
+	 * OptionalVarDeclList ::= (OptionalVarList) OptionalVarDeclList COMMA NewVarDecl
+	*					|
+	*					(NoOptionalVarList) \/*epsilon*\/
+	*					
+	 * 
+	 */
+	
+	public void visit(OptionalVarList ovarDecl) {
+		String name=((VarDeclIdent)ovarDecl.getNewVarDecl()).getName();
+		Obj obj=Tab.find(name);
+		
+		//ako se promenjljiva sa istim imenom nalazi vec deklarisana ovde, onda je to greska
+		if(obj!=Tab.noObj && Tab.currentScope.findSymbol(name)!=null) {
+			report_error("GRESKA:Globalna promenljiva sa nazivom: "+name+" je vec deklarisana u currentScope-u.",ovarDecl);
+			return;
+		}
+		
+		String tip=((VarDeclIdent)ovarDecl.getNewVarDecl()).getAdditionalSquare().obj.getName();
+		if("epsilon".equals(tip)) {
+			report_info("Globalna promenljiva: "+name+" je dodata u tabelu simbola.", ovarDecl);
+			Tab.insert(Obj.Var, name, currType);
+		}else if("[]".equals(tip)) {
+			report_info("Globalna promenjliva tipa niz: "+name+" je dodata u tableu simbola.",ovarDecl);
+			Tab.insert(Obj.Var, name, new Struct(Struct.Array,currType));
+		}else {
+			report_error("Desia se greska promenjliva nije ni niz ni obicna.", ovarDecl);
+		}
+		
+		return;
+	}
+	
+	//class
+	public void visit(VarDeclClass varClass) {
+		String name=((VarDeclIdent)varClass.getNewVarDecl()).getName();
+		Obj obj=Tab.find(name);
+		//ako se promenjljiva sa istim imenom nalazi vec deklarisana ovde, onda je to greska
+		if(obj!=Tab.noObj && Tab.currentScope.findSymbol(name)!=null) {
+			report_error("GRESKA:Promenljiva sa nazivom: "+name+" je vec deklarisana u currentScope-u.",varClass);
+			return;
+		}
+		
+		String tip=((VarDeclIdent)varClass.getNewVarDecl()).getAdditionalSquare().obj.getName();
+		if("epsilon".equals(tip)) {
+			report_info("Promenljiva: "+name+" je dodata u tabelu simbola.", varClass);
+			Tab.insert(Obj.Fld, name, currType);
+		}else if("[]".equals(tip)) {
+			report_info("Promenjliva tipa niz: "+name+" je dodata u tableu simbola.",varClass);
+			Tab.insert(Obj.Fld, name, new Struct(Struct.Array,currType));
+		}else {
+			report_error("Desia se greska promenjliva nije ni niz ni obicna.", varClass);
+		}
+		
+		return;
+	}
+	
+	public void visit(OptionalVarListClass ovarClass) {
+		String name=((VarDeclIdent)ovarClass.getNewVarDecl()).getName();
+		Obj obj=Tab.find(name);
+		//ako se promenjljiva sa istim imenom nalazi vec deklarisana ovde, onda je to greska
+		if(obj!=Tab.noObj && Tab.currentScope.findSymbol(name)!=null) {
+			report_error("GRESKA:Promenljiva sa nazivom: "+name+" je vec deklarisana u currentScope-u.",ovarClass);
+			return;
+		}
+		
+		String tip=((VarDeclIdent)ovarClass.getNewVarDecl()).getAdditionalSquare().obj.getName();
+		if("epsilon".equals(tip)) {
+			report_info("Promenljiva: "+name+" je dodata u tabelu simbola.", ovarClass);
+			Tab.insert(Obj.Fld, name, currType);
+		}else if("[]".equals(tip)) {
+			report_info("Promenjliva tipa niz: "+name+" je dodata u tableu simbola.",ovarClass);
+			Tab.insert(Obj.Fld, name, new Struct(Struct.Array,currType));
+		}else {
+			report_error("Desia se greska promenjliva nije ni niz ni obicna.", ovarClass);
+		}
+		
+		return;
+	}
+	
+	
+	
+	//lokalne promenjljive u metodima
+	/**
+	 * 
+	 * VarDeclMeth ::= (VarDeclMeth) Type NewVarDecl OptionalVarDeclListMeth SEMICOLON;
+	OptionalVarDeclListMeth ::= (OptionalVarListMeth) OptionalVarDeclListMeth COMMA NewVarDecl
+						|
+						(NoOptionalVarListMeth) \/*epsilon*\/
+						;
+	 * 
+	 */
+	
+	public void visit(VarDeclMeth varMeth) {
+		String name=((VarDeclIdent)varMeth.getNewVarDecl()).getName();
+		Obj obj=Tab.find(name);
+		//ako se promenjljiva sa istim imenom nalazi vec deklarisana ovde, onda je to greska
+		if(obj!=Tab.noObj && Tab.currentScope.findSymbol(name)!=null) {
+			report_error("GRESKA:Promenljiva sa nazivom: "+name+" je vec deklarisana u currentScope-u.",varMeth);
+			return;
+		}
+		
+		String tip=((VarDeclIdent)varMeth.getNewVarDecl()).getAdditionalSquare().obj.getName();
+		if("epsilon".equals(tip)) {
+			report_info("Promenljiva: "+name+" je dodata u tabelu simbola.", varMeth);
+			Tab.insert(Obj.Var, name, currType);
+		}else if("[]".equals(tip)) {
+			report_info("Promenjliva tipa niz: "+name+" je dodata u tableu simbola.",varMeth);
+			Tab.insert(Obj.Var, name, new Struct(Struct.Array,currType));
+		}else {
+			report_error("Desia se greska promenjliva nije ni niz ni obicna.", varMeth);
+		}
+		
+		return;
+	}
+	
+	public void visit(OptionalVarListMeth ovarMeth) {
+		String name=((VarDeclIdent)ovarMeth.getNewVarDecl()).getName();
+		Obj obj=Tab.find(name);
+		//ako se promenjljiva sa istim imenom nalazi vec deklarisana ovde, onda je to greska
+		if(obj!=Tab.noObj && Tab.currentScope.findSymbol(name)!=null) {
+			report_error("GRESKA:Promenljiva sa nazivom: "+name+" je vec deklarisana u currentScope-u.",ovarMeth);
+			return;
+		}
+		
+		String tip=((VarDeclIdent)ovarMeth.getNewVarDecl()).getAdditionalSquare().obj.getName();
+		if("epsilon".equals(tip)) {
+			report_info("Promenljiva: "+name+" je dodata u tabelu simbola.", ovarMeth);
+			Tab.insert(Obj.Var, name, currType);
+		}else if("[]".equals(tip)) {
+			report_info("Promenjliva tipa niz: "+name+" je dodata u tableu simbola.",ovarMeth);
+			Tab.insert(Obj.Var, name, new Struct(Struct.Array,currType));
+		}else {
+			report_error("Desia se greska promenjliva nije ni niz ni obicna.", ovarMeth);
+		}
+		
+		return;
+	}
+	
+	//ostalo je staticke metoe i metode namespace da se implementiraju(za namespace treba dodatno ispraviti mjparser)
+	
+	/*********************CLASS DECL ********************************/
+	/**
+	 * ClassDecl ::= (ClassDeclaration) CLASS IDENT:name AdditionalExtends LBRACE ClassBody RBRACE;
+	 * AdditionalExtends ::= (AdditionalExtend) EXTENDS Type:type
+					  |
+					  (NoAdditionalExtend) \/*epsilon*\/
+					  ;
+	 */
+	
+	public void visit(ClassDeclBegin classDecl) {
+		String name=classDecl.getName();
+		
+		Obj classExists=Tab.find(name);
+		
+		if(classExists!=Tab.noObj) {
+			report_error("Vec je deklarisana klasa sa imenom: "+name,classDecl);
+			return;
+		}
+		
+		natklasaTip=classDecl.getAdditionalExtends().struct;
+		
+		natklasaIme=klase.getOrDefault(natklasaTip, null);
+		potklasaIme=name;
+		//potklasaTip=new Struct(Struct.Class,natklasaTip);-zamena
+		potklasaTip=new Struct(Struct.Class);
+		potklasaTip.setElementType(natklasaTip);
+		report_info("Dodata KLASA: "+name+" u tabelu simbola", classDecl);
+		classDecl.obj=Tab.insert(Obj.Type, name, potklasaTip);
+		Tab.openScope();
+		
+		if(natklasaTip!=null) {
+			//ako postoji natklasa
+			String extensionType=((TypeBaseNoColon)((AdditionalExtend)classDecl.getAdditionalExtends()).getType()).getTypeName();
+			Obj extType=Tab.find(extensionType);
+			
+			if(extType==Tab.noObj) {
+				//ako ne postoji zadati indentifikator, to znaci da tip jos uvek nije definisan
+				report_error("Ne postoji natklasa sa imenom: "+ name, classDecl);
+				return;
+			}else {
+				if(klase.getOrDefault(extType.getType(), null)==null) {
+					report_error("Ne postoji zadata natklasa,ona je neki drugi tip, ane klasa",classDecl);
+					return;
+				}
+			}		
+		}
+		
+		if(natklasaTip!=null) {
+			for(Obj obj:natklasaTip.getMembers()) {
+				if(obj.getName().equals(natklasaIme)) {
+					continue;
+				}
+				if(obj.getKind()==Obj.Fld) {
+					Tab.insert(Obj.Fld, obj.getName(), obj.getType());
+				}else if(obj.getKind()==Obj.Meth) {
+					//!!!!!!!!!!!!!!!treba jos neki uslovi kasnije da se dodaju ovde !!!!!!!!!!!
+					Tab.insert(Obj.Meth, obj.getName(), obj.getType());
+				}
+			}
+		}
+		
+		
+	}
+	
+	public void visit(ClassDeclaration classDecl) {
+		
+		//!!!!!!!!!!vrv ovde treba dodati provere i ubacivanje statickih polja!!!!!!
+		klase.put(potklasaTip, potklasaIme);
+		Tab.chainLocalSymbols(potklasaTip);
+		Tab.closeScope();
+		potklasaIme="";
+		natklasaIme="";
+		potklasaTip=null;
+		natklasaTip=null;
+	    
+	}
+	
+	public void visit(AdditionalExtend ae) {
+		ae.struct=ae.getType().struct;
+	}
+	
+	public void visit(NoAdditionalExtend nae) {
+		nae.struct=null;
+	}
+	
+	/**************************METODE*******************/
+	//globalna deklaracija Metoda
+	public void visit(TypeOpt type) {
+		
+		String name=currMethIme=type.getName();
+		//ukoliko je u currentScope-u vec definisana metoda sa tim imenom,a ovo nije potkalsa GRESKA
+		if(Tab.currentScope().findSymbol(name)!=null && potklasaTip==null) {
+			report_error("Metoda: "+name+" je vec deklarisana.",type);
+			currMethType=Tab.noObj;type.obj=Tab.noObj;
+			Tab.openScope();
+			return;
+		}else if(Tab.currentScope().findSymbol(name)!=null) {
+			//u suprotnom ako je ovo potklasa a metod redefinisan dodajemo redefinisan metod,a brisemo nasledjen
+			nadjacanObj=Tab.currentScope().findSymbol(name);
+			Tab.currentScope().getLocals().deleteKey(name);
+		}
+		
+		currMethType=Tab.insert(Obj.Meth, name, type.getType().struct);
+		type.obj=currMethType;
+		Tab.openScope();
+		
+		if(potklasaTip!=null) {
+			//ako je metod klase moramo da dodamo this
+			brojParametara++;
+			report_info("Dodata metoda klase: "+name+" klase "+potklasaIme, type);
+			Tab.insert(Obj.Var, "this", potklasaTip);
+			return;
+		}
+		report_info("Dodata metoda koja je globalna", type);
+		
+	}
+	
+	public void visit(VoidOpt type) {
+		String name=currMethIme=type.getName();
+		//ukoliko je u currentScope-u vec definisana metoda sa tim imenom,a ovo nije potkalsa GRESKA
+		if(Tab.currentScope().findSymbol(name)!=null && potklasaTip==null) {
+			report_error("Metoda: "+name+" je vec deklarisana.",type);
+			currMethType=Tab.noObj;type.obj=Tab.noObj;
+			Tab.openScope();
+			return;
+		}else if(Tab.currentScope().findSymbol(name)!=null) {
+			//u suprotnom ako je ovo potklasa a metod redefinisan dodajemo redefinisan metod,a brisemo nasledjen
+			nadjacanObj=Tab.currentScope().findSymbol(name);
+			Tab.currentScope().getLocals().deleteKey(name);
+		}
+		
+		currMethType=Tab.insert(Obj.Meth, name, Tab.noType);
+		type.obj=currMethType;
+		Tab.openScope();
+		
+		if(potklasaTip!=null) {
+			//ako je metod klase moramo da dodamo this
+			brojParametara++;
+			report_info("Dodata metoda klase: "+name+" klase "+potklasaIme, type);
+			Tab.insert(Obj.Var, "this", potklasaTip);
+			return;
+		}
+		report_info("Dodata metoda koja je globalna", type);
+	}
+	
+	public void visit(MethodDecl methodDecl) {
+		methodDecl.obj=currMethType;
+		//provera da li main ima argumente
+		if("main".equals(currMethIme) && brojParametara>0) {
+			report_error("Funkcija main ne sme da ima argumente", methodDecl);
+		}
+		//otkomentarisi kad dodas proveru za return
+
+		//provera da li funkcija vraca nesto ako je tip razlicit od void
+		//if(!returnStmt && currMethType.getType()!=Tab.noType) {
+			//report_error("Funkcijiji: "+currMethIme+" fali return", methodDecl);
+		//}
+		
+		currMethType.setLevel(brojParametara);
+		brojParametara=0;
+		Tab.chainLocalSymbols(currMethType);
+		Tab.closeScope();
+		
+		currMethIme=null;
+		currMethType=null;
+		nadjacanObj=null;
+		returnStmt=null;
+		
+		
+	}
+	//deklaracija Metoda
+	
+	
+	
+	
+	
+	/************************Statements***************/
+	//returnStmt
+	/**
+	 * 
+	 *Matched ::= ....(StmtReturn) RETURN AdditionalExpr SEMICOLON
+	 * AdditionalExpr ::= (AddExpr) Expr
+					|
+				   (NoAddExpr) \/*epsilon*\/
+				    ;
+	 */
+	public void visit(AddExpr ret) {
+		if(currMethType==null || currMethType==Tab.noObj) {
+			report_error("Return nije u metodi ili funkciji, vec izvan njih", ret);
+			ret.struct=Tab.noType;
+			return;
+		}
+		
+		returnStmt=true;
+		
+		//greska ako je void povratna vrednost a postoji return
+		if(currMethType.getType()==Tab.noType) {
+			report_error("Return, koji vraca neku vrednost, u void funkciji ili metodi", ret);
+			ret.struct=Tab.noType;
+			return;
+		}
+		
+		/****DOPUNI KASNIJE**/
+		//provera da li return vraca
+		/**if(currMethType.getType()!=ret.getExpr().struct) {
+			report_error("Pogresan tip se vraca, funkcija ima drugaciju povratnu vrednost", ret);
+			ret.struct=Tab.noType;
+			return;
+		}*/
+		
+		/**ret.struct=ret.getExpr().struct;**/
+		report_info("Naisao na RETURN",ret);
+		return;
+	}
+	
+	public void visit(NoAddExpr noret) {
+		if(currMethType==null || currMethType==Tab.noObj) {
+			report_error("Return nije u metodi ili funkciji, vec izvan njih", noret);
+			noret.struct=Tab.noType;
+			return;
+		}
+		
+		returnStmt=false;
+		noret.struct=Tab.noType;
+		
+		if(currMethType.getType()!=Tab.noType) {
+			//povratna vrednost ne postoji, a fukcije/metode nije void
+			report_error("Prazan return, za non-void tip", noret);
+			noret.struct=Tab.noType;
+			return;
+		}
+		report_info("Prazna return naredba", noret);
+		return;
+	}
+	
+	/******************TERM******************/
+	
+	/**
+	 * 
+	 * Term ::= (Term) Factor OptionalTermMulop;
+
+		OptionalTermMulop ::= (OptTermMul) OptionalTermMulop Mulop Factor
+							  |
+							  (NoOptTermMul) \/*epsilon*\/
+							  ;
+	 */
+	
+	
+	public void visit(NoOptTermMul noTerm) {
+		noTerm.struct=Tab.intType;
+	}
+	
+	public void visit(OptTermMul optTerm) {
+		Struct optTermMulOp=optTerm.getOptionalTermMulop().struct;
+		Struct factor=optTerm.getFactor().struct;
+		
+		if(optTermMulOp!=factor || factor!=Tab.intType) {
+			report_error("GRESKA:Oba operanda izraza moraju biti tipa int", optTerm);
+			optTerm.struct=Tab.noType;//suptilan nacin za reci null
+		}else {
+			optTerm.struct=Tab.intType;
+		}
+	}
+	
+	public void visit(Term term) {
+		Struct factor=term.getFactor().struct;
+		Struct optTerMulOp=term.getOptionalTermMulop().struct;
+		if(factor!=optTerMulOp || factor!=Tab.intType) {
+			report_error("GRESKA:Oba operanda izraza moraju biti tipa int", term);
+			term.struct=Tab.noType;
+		}else {
+			term.struct=Tab.intType;
+		}
+	}
+	
+	/***********************EXPR**************************/
+	
+	/**
+	 * Expr ::= (Expr) AdditionalMinus Term OptionalAddopTerm;
+
+		AdditionalMinus ::= (AdditMinus) MINUS
+							|
+							(NoAdditMinus) \/*epsilon*\/
+							;
+		OptionalAddopTerm ::= (OptAddTerm) OptionalAddopTerm Addop Term
+							  |
+							  (NoOptAddTerm) \/*epsilon*\/
+							  ;
+
+	 */
+	
+	boolean negativno=false,pozitivno=false;
+	
+	public void visit(OptAddTerm optAddTerm) {
+		Struct addTerm=optAddTerm.getOptionalAddopTerm().struct;
+		Struct term=optAddTerm.getTerm().struct;
+		
+		if(addTerm!=term || term!=Tab.intType) {
+			report_error("GRESKA:Oba operanda izraza moraju biti tipa int", optAddTerm);
+			optAddTerm.struct=Tab.noType;
+		}else {
+			optAddTerm.struct=Tab.intType;
+		}
+	}
+	
+	public void visit(NoOptAddTerm noOptAddTerm) {
+		noOptAddTerm.struct=Tab.intType;
+	}
+	
+	public void visit(AdditMinus minus) {
+		negativno=true;
+	}
+	public void visit(Expr expr) {
+		Struct term=expr.getTerm().struct;
+		Struct optAddopTerm=expr.getOptionalAddopTerm().struct;
+		
+		if(term!=optAddopTerm || term!=Tab.intType) {
+			report_error("GRESKA:Oba operanda izraza moraju biti tipa int", expr);
+			expr.struct=Tab.noType;
+		}else {
+			expr.struct=Tab.intType;
+		}
+	}
+	
+	/****************ASSIGNOP| MULOP | RELOP | ADDOP ************************/
+	/**
+	 * Assignop ::= (Assignop) EQUALS;	
+	 * Mulop ::= (MulopMul) MUL //*
+		   |
+		   (MulopDiv) DIV// /
+		   |
+		   (MulopPercent) PERCENT // %
+		   ;
+		   
+		Relop ::= (RelEqEq) EQUALS_EQUALS // ==
+		  |
+		  (RelNotEq) NOT_EQUALS //!=
+		  |
+		  (RelGrt) GT // >
+		  |
+		  (RelGrtEq) GTE // >=
+		  |
+		  (RelLt) LT // <
+		  |
+		  (RelLtEq) LTE  // <=
+		  ;
+		 Addop ::= (AddOpPlus) PLUS // +
+		  |
+		  (AddOpMinus) MINUS // -
+		  ;
+	 * @return
+	 */
+	public String currOperator=null;
+	
+	//Asignop
+	public void visit(Assignop a) {
+		currOperator="=";
+	}
+	
+	//Mulop
+	public void visit(MulopMul m) {
+		currOperator="*";
+	}
+	
+	public void visit(MulopDiv d) {
+		currOperator="/";
+	}
+	
+	public void visit(MulopPercent p) {
+		currOperator="%";
+	}
+	
+	//Addop
+	public void visit(AddOpPlus a) {
+		currOperator="+";
+	}
+	
+	public void visit(AddOpMinus m) {
+		currOperator="-";
+	}
+	
+	//Relop
+	public void visit(RelEqEq eq) {
+		currOperator="==";
+	}
+	public void visit(RelNotEq neq) {
+		currOperator="!=";
+	}
+	public void visit(RelGrt g) {
+		currOperator=">";
+	}
+	public void visit(RelGrtEq gr) {
+		currOperator=">=";
+	}
+	public void visit(RelLt l) {
+		currOperator="<";
+	}
+	public void visit(RelLtEq lt) {
+		currOperator="<=";
+	}
+	
+	/*********************FACTOR*******************/
+	
+	/**
+	 *  FactorDesignator ::= (FactorDesignator) Designator;
+		Factor ::= (FactorDesign) FactorDesignator AdditionalParentheses
+					|
+					(FactorNum) NUMCONST
+					|
+					(FactorChar) CHARCONST
+					|
+					(FactorBool) BOOLCONST
+					|
+					(FactorNew) NEW Type OrExprActPars
+					|
+					(FactorExpr) LPAREN Expr RPAREN
+					;
+			
+		AdditionalParentheses ::= (AddParen) LPAREN AdditionalActParOp RPAREN
+							|
+							(NoAddParen) \/*epsilon*\/
+							;
+		AdditionalActParOp ::= (AddActPar2) ActPars
+					   |
+					   (NoAddActPar2) \/*epsilon*\/
+					   ;
+	    OrExprActPars ::= (OrExprop) LSQUARE Expr RSQUARE
+				   |
+				   (OrActPar) LPAREN AdditionalActPars RPAREN
+				   ;
+	 * @return
+	 */
+	//factor se koristi pri racunu npr: a=b+c+f(1,2)
+	
+	public void visit(FactorDesign fd) {
+		if(fd.getFactorDesignator().getDesignator().obj==null) return; //!!!!TEMP DOK NE IMPLEMENTIRAM DESIGNATOR!!!!
+		Integer type=fd.getFactorDesignator().getDesignator().obj.getKind();
+		
+		if(type!=Obj.Meth) {
+			report_error("GRESKA:Zove se metoda koja nije deklarisana(designator je ne prepoznaje)",fd);
+			fd.struct=Tab.noType;//elegantan nacin a reci null
+		}else {
+			report_info("Prepoznata metoda klase ili funkcija", fd);
+			//vracamo povratnu vrednost funkcije da bi se na visi nivoima dobro sabiraju vrednosti
+			fd.struct=fd.getFactorDesignator().getDesignator().obj.getType();
+		}
+	}
+	
+	public void visit(FactorNew fn) {
+		OrExprActPars orActPars=fn.getOrExprActPars();
+		if(orActPars.getClass()==OrExprop.class) {
+			if(((OrExprop)fn.getOrExprActPars()).getExpr().struct!=Tab.intType) {
+				report_error("GRESKA:Operator new mora imati int tip za generisanje niza npr. new int[8]", orActPars);
+				fn.struct=Tab.noType;
+			}else {
+				report_info("Kreiran je niz objekata tipa:"+fn.getType(), orActPars);
+				fn.struct=new Struct(Struct.Array,fn.getType().struct);
+			}
+		}else if(orActPars.getClass()==OrActPar.class) {
+			Integer klasa= fn.getType().struct.getKind();
+			if(klasa!=Struct.Class) {
+				report_error("GRESKA:Operatorom new pokusavate da napravite klasu koja nije deklarisana",fn);
+				fn.struct=Tab.noType;
+			}else {
+				report_info("Kreirana je klasa operatorom new: "+fn.getType(), orActPars);
+				fn.struct=fn.getType().struct;
+				//!!!!!!!mozda jos nesto za trenutni konstruktor treba dodati ovde!!!!!!!!!!!!!!!!
+			}
+		}else {
+			report_error("Desila se neka greska, new prima operator koji nije ni ActPars, a ni Expr,cudno(vrv greska neka)",fn);
+		}
+	}
+	
+	/***************************** DESIGNATOR *************************/
+	/**
+	 * Designator ::= (DesignatorM) DesignatorMatched
+						|
+						(DesignatorU) DesignatorUnmatched
+					    ;
+		DesPom ::= (DesPom) IDENT;
+		DesignatorMatched ::= (DesMatch) DesPom OptionalDesignatorOpp;
+		DesignatorUnmatched ::= (DesUnmatch) IDENT COLON COLON DesignatorMatched;
+		
+		OptionalDesignatorOpp ::= (OptDesignOpp) OptionalDesignatorOpp OrIdentExpr
+								  |
+								  (NoOptDesignOpp) \/*epsilon*\/
+								  ;
+		OrIdentExpr ::= (OrIdent) DOT IDENT:iden
+						|
+						(OrExpr) LSQUARE Expr RSQUARE
+						;	
+						a
+						/ \
+						a
+						\
+						b
+	 * 
+	 */
+	//napomena Designator.a , Designator mora da bude naziv klase
+	Stack<Obj> designator=new Stack<Obj>();
+	boolean jedinstven=true;
+	
+	public void visit(DesPom dp) {
+		
+	}
+	
+	
+	public void Designator(DesignatorM d) {
+		d.obj=d.getDesignatorMatched().obj;
+	}
+	public void visit(DesMatch dm) {
+		if(jedinstven!=true) {
+			dm.obj=dm.getOptionalDesignatorOpp().obj;
+		}else {
+			dm.obj=dm.getDesPom().obj;
+		}
+		jedinstven=true;
+		if(!designator.empty()) designator.pop();
+	}
+	
+	public void visit(OptDesignOpp op) {
+		/**
+		if(op.getOrIdentExpr().getClass()==OrIdent.class) {
+			System.out.println("-------PROBA----------: "+((OrIdent)op.getOrIdentExpr()).getIden());
+		}else {
+			System.out.println("-------PROBA----------: ");
+		}
+		*/
+		
+		//pristup elementu klase
+		if(op.getOrIdentExpr().getClass()==OrIdent.class) {//kao instanceof
+			jedinstven=false;
+			if(!designator.empty()) {
+				op.obj=Tab.noObj;
+				return;
+			}
+			Obj currDesignator=designator.pop();
+			if(currDesignator==Tab.noObj) {
+				op.obj=Tab.noObj;
+				return;
+			}
+			
+			if(currDesignator.getType().getKind()==Struct.Class) {
+				report_error("GRESKA:Pristupa se polju elementa koji nije klasa", op);
+				op.obj=Tab.noObj;//suptilan nacin a reci null
+				return;
+			}
+			
+			//da bi se sprecila beskonacna rekurzija ako je tip elementa klase sama ista kao i sama klasa
+			//znaci ako pristupamo polju dok smo jos u klasi
+			//npr. class M{M m; int a; void metod(){m.a=5;}}
+			
+			if(currDesignator.getType().getElemType()==potklasaTip) {
+				//pronalazimo polje a,za objekat m kome pristupamo iz slikovitog primera
+				Obj obj=Tab.currentScope.getOuter().findSymbol(((OrIdent)op.getOrIdentExpr()).getIden());
+				
+				if(obj==null) {
+					report_error("Klasa: "+potklasaIme+" nema polje "+((OrIdent)op.getOrIdentExpr()).getIden(),op);
+					op.obj=Tab.noObj;
+					return;
+				}else {
+					report_info("Pristupa se polju: "+((OrIdent)op.getOrIdentExpr()).getIden()+" klase: "+potklasaIme,op);
+					designator.add(obj);
+					op.obj=obj;
+					return;
+				}
+			}
+			
+			//pristup polju klase iz neke fruge klase ili globalne metode
+			// npr. class M{M m; int a;} void pri(){m.a=5;}
+			
+			//posto je definicija klase ovde gotova, imamo formiran struct cvor koji ukazuje na polja i metode klase
+			//zato dohvatamo sve objekte klase
+			//i onda u jednoj for petlji prolazimo kroz sve elemente da vidimo da li postoji polje klase kome se pristupa
+			
+			ArrayList<Obj> listaPotencijalnihPolja=new ArrayList<>(currDesignator.getType().getMembers());
+			
+			for(Obj obj:listaPotencijalnihPolja) {
+				if(((OrIdent)op.getOrIdentExpr()).getIden().equals(obj.getName())) {
+					report_info("Pristupa se polju ili metodu klase izvan klase", op);
+					designator.push(obj);
+					op.obj=obj;
+					return;
+				}
+			}
+			
+			report_error("Ne postoji polje ili metoda klase kojoj se pristupa", op);
+			return;
+			
+		}
+		//pristup elementu niza klase
+		
+		if(op.getOrIdentExpr().getClass()==OrExpr.class) {
+			Expr expr=((OrExpr)op.getOrIdentExpr()).getExpr();
+			jedinstven=false;
+			if(expr.struct!=Tab.intType) {
+				//ako indeksiramo niz sa elementom koji nije int
+				report_error("GRESKA: Indeksiranje niza elementom koji nije int",op);
+				op.obj=Tab.noObj;
+				return;
+			}
+			
+			if(designator.empty()) {
+				op.obj=Tab.noObj;
+				return;
+			}
+			
+			Obj currDesignator=designator.pop();
+			
+			if(currDesignator!=null) {
+				if(currDesignator.getType().getKind()!=Struct.Array) {
+					report_error("GRESKA: Promenjljiva kojoj se trenutno pristupa nije niz",op);
+					op.obj=Tab.noObj;
+					return;
+				}else {
+					//vracamo gore samo element niza kome se pristupa odnosno njegov tip
+					op.obj=new Obj(Obj.Elem,currDesignator.getName(),currDesignator.getType().getElemType());
+					designator.add(op.obj);
+					return;	
+				}
+			}
+			
+		}
+		
+	}
+	
+	
+	
+	public void visit(FactorExpr fe) {
+		fe.struct=fe.getExpr().struct;
+	}
+	
+	public void visit(FactorNum fn) {
+		fn.struct=Tab.intType;
+	}
+	
+	public void visit(FactorBool bt) {
+		bt.struct=booleanType;
+	}
+	
+	public void visit(FactorChar fc) {
+		fc.struct=Tab.charType;
+	}
+	
+	/***********************ACT PARS-stvarni argumenti pri pozivu funkcije***********/
+	public void visit() {
+		
+	}
+	
+	public boolean passed(){
+    	return !errorDetected;
+    }
+}

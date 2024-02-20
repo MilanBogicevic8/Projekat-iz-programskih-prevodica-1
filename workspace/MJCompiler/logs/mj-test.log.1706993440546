@@ -1,0 +1,961 @@
+INFO  21:48:49,156 - Compiling source file: C:\pp1domaci\workspace\MJCompiler\test\program.mj
+INFO  21:48:49,277 - #2 program
+INFO  21:48:49,278 - #48 test302
+INFO  21:48:49,278 - #48 int
+INFO  21:48:49,284 - #48 i
+INFO  21:48:49,284 - #35 ;
+INFO  21:48:49,288 - #48 bool
+INFO  21:48:49,289 - #48 ibool
+INFO  21:48:49,290 - #35 ;
+INFO  21:48:49,290 - #48 int
+INFO  21:48:49,290 - #48 niz
+INFO  21:48:49,290 - #41 [
+INFO  21:48:49,290 - #42 ]
+INFO  21:48:49,291 - #37 ,
+INFO  21:48:49,292 - #48 niz2
+INFO  21:48:49,292 - #41 [
+INFO  21:48:49,292 - #42 ]
+INFO  21:48:49,292 - #35 ;
+INFO  21:48:49,292 - #48 int
+INFO  21:48:49,293 - #48 a
+INFO  21:48:49,293 - #37 ,
+INFO  21:48:49,293 - #48 b
+INFO  21:48:49,293 - #37 ,
+INFO  21:48:49,304 - #48 c
+INFO  21:48:49,304 - #37 ,
+INFO  21:48:49,304 - #48 d
+INFO  21:48:49,305 - #37 ,
+INFO  21:48:49,305 - #48 curr
+INFO  21:48:49,305 - #35 ;
+INFO  21:48:49,305 - #43 {
+INFO  21:48:49,305 - #48 bool
+INFO  21:48:49,306 - #48 verify
+INFO  21:48:49,306 - #39 (
+INFO  21:48:49,306 - #40 )
+INFO  21:48:49,307 - #43 {
+INFO  21:48:49,307 - #9 print
+INFO  21:48:49,308 - #39 (
+INFO  21:48:49,308 - #50 v
+INFO  21:48:49,309 - #40 )
+INFO  21:48:49,315 - #35 ;
+INFO  21:48:49,315 - #11 return
+INFO  21:48:49,316 - #49 false
+INFO  21:48:49,316 - #35 ;
+INFO  21:48:49,316 - #44 }
+INFO  21:48:49,316 - #12 void
+INFO  21:48:49,318 - #48 main
+INFO  21:48:49,318 - #39 (
+INFO  21:48:49,319 - #40 )
+INFO  21:48:49,319 - #43 {
+INFO  21:48:49,319 - #9 print
+INFO  21:48:49,320 - #39 (
+INFO  21:48:49,320 - #50 a
+INFO  21:48:49,320 - #40 )
+INFO  21:48:49,321 - #35 ;
+INFO  21:48:49,321 - #48 niz2
+INFO  21:48:49,321 - #32 =
+INFO  21:48:49,323 - #8 new
+INFO  21:48:49,324 - #48 int
+INFO  21:48:49,324 - #41 [
+INFO  21:48:49,325 - #47 4
+INFO  21:48:49,326 - #42 ]
+INFO  21:48:49,326 - #35 ;
+INFO  21:48:49,327 - #48 niz
+INFO  21:48:49,328 - #32 =
+INFO  21:48:49,328 - #8 new
+INFO  21:48:49,328 - #48 int
+INFO  21:48:49,328 - #41 [
+INFO  21:48:49,329 - #47 8
+INFO  21:48:49,329 - #42 ]
+INFO  21:48:49,329 - #35 ;
+INFO  21:48:49,329 - #48 niz
+INFO  21:48:49,329 - #41 [
+INFO  21:48:49,331 - #47 0
+INFO  21:48:49,331 - #42 ]
+INFO  21:48:49,331 - #32 =
+INFO  21:48:49,332 - #47 1
+INFO  21:48:49,332 - #35 ;
+INFO  21:48:49,333 - #48 niz
+INFO  21:48:49,333 - #41 [
+INFO  21:48:49,333 - #47 1
+INFO  21:48:49,334 - #42 ]
+INFO  21:48:49,334 - #32 =
+INFO  21:48:49,334 - #47 2
+INFO  21:48:49,335 - #35 ;
+INFO  21:48:49,335 - #48 niz
+INFO  21:48:49,336 - #41 [
+INFO  21:48:49,336 - #47 2
+INFO  21:48:49,336 - #42 ]
+INFO  21:48:49,336 - #32 =
+INFO  21:48:49,336 - #47 3
+INFO  21:48:49,337 - #35 ;
+INFO  21:48:49,337 - #48 niz
+INFO  21:48:49,337 - #41 [
+INFO  21:48:49,338 - #47 3
+INFO  21:48:49,338 - #42 ]
+INFO  21:48:49,338 - #32 =
+INFO  21:48:49,338 - #47 4
+INFO  21:48:49,339 - #35 ;
+INFO  21:48:49,339 - #48 niz
+INFO  21:48:49,340 - #41 [
+INFO  21:48:49,340 - #47 4
+INFO  21:48:49,341 - #42 ]
+INFO  21:48:49,341 - #32 =
+INFO  21:48:49,342 - #47 5
+INFO  21:48:49,343 - #35 ;
+INFO  21:48:49,343 - #48 niz
+INFO  21:48:49,344 - #41 [
+INFO  21:48:49,344 - #47 5
+INFO  21:48:49,345 - #42 ]
+INFO  21:48:49,347 - #32 =
+INFO  21:48:49,347 - #47 6
+INFO  21:48:49,348 - #35 ;
+INFO  21:48:49,348 - #16 for
+INFO  21:48:49,349 - #39 (
+INFO  21:48:49,351 - #48 a
+INFO  21:48:49,352 - #36 :
+INFO  21:48:49,352 - #48 niz
+INFO  21:48:49,354 - #40 )
+INFO  21:48:49,355 - #43 {
+INFO  21:48:49,360 - #9 print
+INFO  21:48:49,360 - #39 (
+INFO  21:48:49,360 - #48 a
+INFO  21:48:49,361 - #40 )
+INFO  21:48:49,361 - #35 ;
+INFO  21:48:49,361 - #44 }
+INFO  21:48:49,362 - #44 }
+INFO  21:48:49,363 - #44 }
+INFO  21:48:49,386 - Program(
+  ProgName(
+   test302
+  ) [ProgName]
+  NoNameSpaceL(
+  ) [NoNameSpaceL]
+  VarDeclL(
+    VarDeclL(
+      VarDeclL(
+        VarDeclL(
+          NoConstDeclL(
+          ) [NoConstDeclL]
+          VarDecl(
+            TypeBaseNoColon(
+             int
+            ) [TypeBaseNoColon]
+            VarDeclIdent(
+             i
+              NoAdditionalS(
+              ) [NoAdditionalS]
+            ) [VarDeclIdent]
+            NoOptionalVarList(
+            ) [NoOptionalVarList]
+          ) [VarDecl]
+        ) [VarDeclL]
+        VarDecl(
+          TypeBaseNoColon(
+           bool
+          ) [TypeBaseNoColon]
+          VarDeclIdent(
+           ibool
+            NoAdditionalS(
+            ) [NoAdditionalS]
+          ) [VarDeclIdent]
+          NoOptionalVarList(
+          ) [NoOptionalVarList]
+        ) [VarDecl]
+      ) [VarDeclL]
+      VarDecl(
+        TypeBaseNoColon(
+         int
+        ) [TypeBaseNoColon]
+        VarDeclIdent(
+         niz
+          AdditionalS(
+          ) [AdditionalS]
+        ) [VarDeclIdent]
+        OptionalVarList(
+          NoOptionalVarList(
+          ) [NoOptionalVarList]
+          VarDeclIdent(
+           niz2
+            AdditionalS(
+            ) [AdditionalS]
+          ) [VarDeclIdent]
+        ) [OptionalVarList]
+      ) [VarDecl]
+    ) [VarDeclL]
+    VarDecl(
+      TypeBaseNoColon(
+       int
+      ) [TypeBaseNoColon]
+      VarDeclIdent(
+       a
+        NoAdditionalS(
+        ) [NoAdditionalS]
+      ) [VarDeclIdent]
+      OptionalVarList(
+        OptionalVarList(
+          OptionalVarList(
+            OptionalVarList(
+              NoOptionalVarList(
+              ) [NoOptionalVarList]
+              VarDeclIdent(
+               b
+                NoAdditionalS(
+                ) [NoAdditionalS]
+              ) [VarDeclIdent]
+            ) [OptionalVarList]
+            VarDeclIdent(
+             c
+              NoAdditionalS(
+              ) [NoAdditionalS]
+            ) [VarDeclIdent]
+          ) [OptionalVarList]
+          VarDeclIdent(
+           d
+            NoAdditionalS(
+            ) [NoAdditionalS]
+          ) [VarDeclIdent]
+        ) [OptionalVarList]
+        VarDeclIdent(
+         curr
+          NoAdditionalS(
+          ) [NoAdditionalS]
+        ) [VarDeclIdent]
+      ) [OptionalVarList]
+    ) [VarDecl]
+  ) [VarDeclL]
+  MethDeclL(
+    MethDeclL(
+      NoMethDeclL(
+      ) [NoMethDeclL]
+      MethodDecl(
+        TypeOpt(
+          TypeBaseNoColon(
+           bool
+          ) [TypeBaseNoColon]
+         verify
+        ) [TypeOpt]
+        NoAddFormPars(
+        ) [NoAddFormPars]
+        NoOptMethVarDclL(
+        ) [NoOptMethVarDclL]
+        StmtList(
+          StmtList(
+            NoStmtList(
+            ) [NoStmtList]
+            MatchedStmt(
+              StmtPrint(
+                Expr(
+                  NoAdditMinus(
+                  ) [NoAdditMinus]
+                  Term(
+                    FactorChar(
+                     v
+                    ) [FactorChar]
+                    NoOptTermMul(
+                    ) [NoOptTermMul]
+                  ) [Term]
+                  ExprMinusFlag(
+                  ) [ExprMinusFlag]
+                  NoOptAddTerm(
+                  ) [NoOptAddTerm]
+                ) [Expr]
+                NoAddPrintN(
+                ) [NoAddPrintN]
+              ) [StmtPrint]
+            ) [MatchedStmt]
+          ) [StmtList]
+          MatchedStmt(
+            StmtReturn(
+              AddExpr(
+                Expr(
+                  NoAdditMinus(
+                  ) [NoAdditMinus]
+                  Term(
+                    FactorBool(
+                     false
+                    ) [FactorBool]
+                    NoOptTermMul(
+                    ) [NoOptTermMul]
+                  ) [Term]
+                  ExprMinusFlag(
+                  ) [ExprMinusFlag]
+                  NoOptAddTerm(
+                  ) [NoOptAddTerm]
+                ) [Expr]
+              ) [AddExpr]
+            ) [StmtReturn]
+          ) [MatchedStmt]
+        ) [StmtList]
+      ) [MethodDecl]
+    ) [MethDeclL]
+    MethodDecl(
+      VoidOpt(
+       main
+      ) [VoidOpt]
+      NoAddFormPars(
+      ) [NoAddFormPars]
+      NoOptMethVarDclL(
+      ) [NoOptMethVarDclL]
+      StmtList(
+        StmtList(
+          StmtList(
+            StmtList(
+              StmtList(
+                StmtList(
+                  StmtList(
+                    StmtList(
+                      StmtList(
+                        StmtList(
+                          NoStmtList(
+                          ) [NoStmtList]
+                          MatchedStmt(
+                            StmtPrint(
+                              Expr(
+                                NoAdditMinus(
+                                ) [NoAdditMinus]
+                                Term(
+                                  FactorChar(
+                                   a
+                                  ) [FactorChar]
+                                  NoOptTermMul(
+                                  ) [NoOptTermMul]
+                                ) [Term]
+                                ExprMinusFlag(
+                                ) [ExprMinusFlag]
+                                NoOptAddTerm(
+                                ) [NoOptAddTerm]
+                              ) [Expr]
+                              NoAddPrintN(
+                              ) [NoAddPrintN]
+                            ) [StmtPrint]
+                          ) [MatchedStmt]
+                        ) [StmtList]
+                        MatchedStmt(
+                          DesStm(
+                            DesStmtE(
+                              DesignatorM(
+                                DesMatch(
+                                  DesPom(
+                                   niz2
+                                  ) [DesPom]
+                                  NoOptDesignOpp(
+                                  ) [NoOptDesignOpp]
+                                ) [DesMatch]
+                              ) [DesignatorM]
+                              OrAssignExpr(
+                                Assignop(
+                                ) [Assignop]
+                                Expr(
+                                  NoAdditMinus(
+                                  ) [NoAdditMinus]
+                                  Term(
+                                    FactorNew(
+                                      TypeBaseNoColon(
+                                       int
+                                      ) [TypeBaseNoColon]
+                                      CuvarObjektaKlase(
+                                      ) [CuvarObjektaKlase]
+                                      OrExprop(
+                                        Expr(
+                                          NoAdditMinus(
+                                          ) [NoAdditMinus]
+                                          Term(
+                                            FactorNum(
+                                             4
+                                            ) [FactorNum]
+                                            NoOptTermMul(
+                                            ) [NoOptTermMul]
+                                          ) [Term]
+                                          ExprMinusFlag(
+                                          ) [ExprMinusFlag]
+                                          NoOptAddTerm(
+                                          ) [NoOptAddTerm]
+                                        ) [Expr]
+                                      ) [OrExprop]
+                                    ) [FactorNew]
+                                    NoOptTermMul(
+                                    ) [NoOptTermMul]
+                                  ) [Term]
+                                  ExprMinusFlag(
+                                  ) [ExprMinusFlag]
+                                  NoOptAddTerm(
+                                  ) [NoOptAddTerm]
+                                ) [Expr]
+                              ) [OrAssignExpr]
+                            ) [DesStmtE]
+                          ) [DesStm]
+                        ) [MatchedStmt]
+                      ) [StmtList]
+                      MatchedStmt(
+                        DesStm(
+                          DesStmtE(
+                            DesignatorM(
+                              DesMatch(
+                                DesPom(
+                                 niz
+                                ) [DesPom]
+                                NoOptDesignOpp(
+                                ) [NoOptDesignOpp]
+                              ) [DesMatch]
+                            ) [DesignatorM]
+                            OrAssignExpr(
+                              Assignop(
+                              ) [Assignop]
+                              Expr(
+                                NoAdditMinus(
+                                ) [NoAdditMinus]
+                                Term(
+                                  FactorNew(
+                                    TypeBaseNoColon(
+                                     int
+                                    ) [TypeBaseNoColon]
+                                    CuvarObjektaKlase(
+                                    ) [CuvarObjektaKlase]
+                                    OrExprop(
+                                      Expr(
+                                        NoAdditMinus(
+                                        ) [NoAdditMinus]
+                                        Term(
+                                          FactorNum(
+                                           8
+                                          ) [FactorNum]
+                                          NoOptTermMul(
+                                          ) [NoOptTermMul]
+                                        ) [Term]
+                                        ExprMinusFlag(
+                                        ) [ExprMinusFlag]
+                                        NoOptAddTerm(
+                                        ) [NoOptAddTerm]
+                                      ) [Expr]
+                                    ) [OrExprop]
+                                  ) [FactorNew]
+                                  NoOptTermMul(
+                                  ) [NoOptTermMul]
+                                ) [Term]
+                                ExprMinusFlag(
+                                ) [ExprMinusFlag]
+                                NoOptAddTerm(
+                                ) [NoOptAddTerm]
+                              ) [Expr]
+                            ) [OrAssignExpr]
+                          ) [DesStmtE]
+                        ) [DesStm]
+                      ) [MatchedStmt]
+                    ) [StmtList]
+                    MatchedStmt(
+                      DesStm(
+                        DesStmtE(
+                          DesignatorM(
+                            DesMatch(
+                              DesPom(
+                               niz
+                              ) [DesPom]
+                              OptDesignOpp(
+                                NoOptDesignOpp(
+                                ) [NoOptDesignOpp]
+                                OrExpr(
+                                  OrIEFlag(
+                                  ) [OrIEFlag]
+                                  Expr(
+                                    NoAdditMinus(
+                                    ) [NoAdditMinus]
+                                    Term(
+                                      FactorNum(
+                                       0
+                                      ) [FactorNum]
+                                      NoOptTermMul(
+                                      ) [NoOptTermMul]
+                                    ) [Term]
+                                    ExprMinusFlag(
+                                    ) [ExprMinusFlag]
+                                    NoOptAddTerm(
+                                    ) [NoOptAddTerm]
+                                  ) [Expr]
+                                ) [OrExpr]
+                              ) [OptDesignOpp]
+                            ) [DesMatch]
+                          ) [DesignatorM]
+                          OrAssignExpr(
+                            Assignop(
+                            ) [Assignop]
+                            Expr(
+                              NoAdditMinus(
+                              ) [NoAdditMinus]
+                              Term(
+                                FactorNum(
+                                 1
+                                ) [FactorNum]
+                                NoOptTermMul(
+                                ) [NoOptTermMul]
+                              ) [Term]
+                              ExprMinusFlag(
+                              ) [ExprMinusFlag]
+                              NoOptAddTerm(
+                              ) [NoOptAddTerm]
+                            ) [Expr]
+                          ) [OrAssignExpr]
+                        ) [DesStmtE]
+                      ) [DesStm]
+                    ) [MatchedStmt]
+                  ) [StmtList]
+                  MatchedStmt(
+                    DesStm(
+                      DesStmtE(
+                        DesignatorM(
+                          DesMatch(
+                            DesPom(
+                             niz
+                            ) [DesPom]
+                            OptDesignOpp(
+                              NoOptDesignOpp(
+                              ) [NoOptDesignOpp]
+                              OrExpr(
+                                OrIEFlag(
+                                ) [OrIEFlag]
+                                Expr(
+                                  NoAdditMinus(
+                                  ) [NoAdditMinus]
+                                  Term(
+                                    FactorNum(
+                                     1
+                                    ) [FactorNum]
+                                    NoOptTermMul(
+                                    ) [NoOptTermMul]
+                                  ) [Term]
+                                  ExprMinusFlag(
+                                  ) [ExprMinusFlag]
+                                  NoOptAddTerm(
+                                  ) [NoOptAddTerm]
+                                ) [Expr]
+                              ) [OrExpr]
+                            ) [OptDesignOpp]
+                          ) [DesMatch]
+                        ) [DesignatorM]
+                        OrAssignExpr(
+                          Assignop(
+                          ) [Assignop]
+                          Expr(
+                            NoAdditMinus(
+                            ) [NoAdditMinus]
+                            Term(
+                              FactorNum(
+                               2
+                              ) [FactorNum]
+                              NoOptTermMul(
+                              ) [NoOptTermMul]
+                            ) [Term]
+                            ExprMinusFlag(
+                            ) [ExprMinusFlag]
+                            NoOptAddTerm(
+                            ) [NoOptAddTerm]
+                          ) [Expr]
+                        ) [OrAssignExpr]
+                      ) [DesStmtE]
+                    ) [DesStm]
+                  ) [MatchedStmt]
+                ) [StmtList]
+                MatchedStmt(
+                  DesStm(
+                    DesStmtE(
+                      DesignatorM(
+                        DesMatch(
+                          DesPom(
+                           niz
+                          ) [DesPom]
+                          OptDesignOpp(
+                            NoOptDesignOpp(
+                            ) [NoOptDesignOpp]
+                            OrExpr(
+                              OrIEFlag(
+                              ) [OrIEFlag]
+                              Expr(
+                                NoAdditMinus(
+                                ) [NoAdditMinus]
+                                Term(
+                                  FactorNum(
+                                   2
+                                  ) [FactorNum]
+                                  NoOptTermMul(
+                                  ) [NoOptTermMul]
+                                ) [Term]
+                                ExprMinusFlag(
+                                ) [ExprMinusFlag]
+                                NoOptAddTerm(
+                                ) [NoOptAddTerm]
+                              ) [Expr]
+                            ) [OrExpr]
+                          ) [OptDesignOpp]
+                        ) [DesMatch]
+                      ) [DesignatorM]
+                      OrAssignExpr(
+                        Assignop(
+                        ) [Assignop]
+                        Expr(
+                          NoAdditMinus(
+                          ) [NoAdditMinus]
+                          Term(
+                            FactorNum(
+                             3
+                            ) [FactorNum]
+                            NoOptTermMul(
+                            ) [NoOptTermMul]
+                          ) [Term]
+                          ExprMinusFlag(
+                          ) [ExprMinusFlag]
+                          NoOptAddTerm(
+                          ) [NoOptAddTerm]
+                        ) [Expr]
+                      ) [OrAssignExpr]
+                    ) [DesStmtE]
+                  ) [DesStm]
+                ) [MatchedStmt]
+              ) [StmtList]
+              MatchedStmt(
+                DesStm(
+                  DesStmtE(
+                    DesignatorM(
+                      DesMatch(
+                        DesPom(
+                         niz
+                        ) [DesPom]
+                        OptDesignOpp(
+                          NoOptDesignOpp(
+                          ) [NoOptDesignOpp]
+                          OrExpr(
+                            OrIEFlag(
+                            ) [OrIEFlag]
+                            Expr(
+                              NoAdditMinus(
+                              ) [NoAdditMinus]
+                              Term(
+                                FactorNum(
+                                 3
+                                ) [FactorNum]
+                                NoOptTermMul(
+                                ) [NoOptTermMul]
+                              ) [Term]
+                              ExprMinusFlag(
+                              ) [ExprMinusFlag]
+                              NoOptAddTerm(
+                              ) [NoOptAddTerm]
+                            ) [Expr]
+                          ) [OrExpr]
+                        ) [OptDesignOpp]
+                      ) [DesMatch]
+                    ) [DesignatorM]
+                    OrAssignExpr(
+                      Assignop(
+                      ) [Assignop]
+                      Expr(
+                        NoAdditMinus(
+                        ) [NoAdditMinus]
+                        Term(
+                          FactorNum(
+                           4
+                          ) [FactorNum]
+                          NoOptTermMul(
+                          ) [NoOptTermMul]
+                        ) [Term]
+                        ExprMinusFlag(
+                        ) [ExprMinusFlag]
+                        NoOptAddTerm(
+                        ) [NoOptAddTerm]
+                      ) [Expr]
+                    ) [OrAssignExpr]
+                  ) [DesStmtE]
+                ) [DesStm]
+              ) [MatchedStmt]
+            ) [StmtList]
+            MatchedStmt(
+              DesStm(
+                DesStmtE(
+                  DesignatorM(
+                    DesMatch(
+                      DesPom(
+                       niz
+                      ) [DesPom]
+                      OptDesignOpp(
+                        NoOptDesignOpp(
+                        ) [NoOptDesignOpp]
+                        OrExpr(
+                          OrIEFlag(
+                          ) [OrIEFlag]
+                          Expr(
+                            NoAdditMinus(
+                            ) [NoAdditMinus]
+                            Term(
+                              FactorNum(
+                               4
+                              ) [FactorNum]
+                              NoOptTermMul(
+                              ) [NoOptTermMul]
+                            ) [Term]
+                            ExprMinusFlag(
+                            ) [ExprMinusFlag]
+                            NoOptAddTerm(
+                            ) [NoOptAddTerm]
+                          ) [Expr]
+                        ) [OrExpr]
+                      ) [OptDesignOpp]
+                    ) [DesMatch]
+                  ) [DesignatorM]
+                  OrAssignExpr(
+                    Assignop(
+                    ) [Assignop]
+                    Expr(
+                      NoAdditMinus(
+                      ) [NoAdditMinus]
+                      Term(
+                        FactorNum(
+                         5
+                        ) [FactorNum]
+                        NoOptTermMul(
+                        ) [NoOptTermMul]
+                      ) [Term]
+                      ExprMinusFlag(
+                      ) [ExprMinusFlag]
+                      NoOptAddTerm(
+                      ) [NoOptAddTerm]
+                    ) [Expr]
+                  ) [OrAssignExpr]
+                ) [DesStmtE]
+              ) [DesStm]
+            ) [MatchedStmt]
+          ) [StmtList]
+          MatchedStmt(
+            DesStm(
+              DesStmtE(
+                DesignatorM(
+                  DesMatch(
+                    DesPom(
+                     niz
+                    ) [DesPom]
+                    OptDesignOpp(
+                      NoOptDesignOpp(
+                      ) [NoOptDesignOpp]
+                      OrExpr(
+                        OrIEFlag(
+                        ) [OrIEFlag]
+                        Expr(
+                          NoAdditMinus(
+                          ) [NoAdditMinus]
+                          Term(
+                            FactorNum(
+                             5
+                            ) [FactorNum]
+                            NoOptTermMul(
+                            ) [NoOptTermMul]
+                          ) [Term]
+                          ExprMinusFlag(
+                          ) [ExprMinusFlag]
+                          NoOptAddTerm(
+                          ) [NoOptAddTerm]
+                        ) [Expr]
+                      ) [OrExpr]
+                    ) [OptDesignOpp]
+                  ) [DesMatch]
+                ) [DesignatorM]
+                OrAssignExpr(
+                  Assignop(
+                  ) [Assignop]
+                  Expr(
+                    NoAdditMinus(
+                    ) [NoAdditMinus]
+                    Term(
+                      FactorNum(
+                       6
+                      ) [FactorNum]
+                      NoOptTermMul(
+                      ) [NoOptTermMul]
+                    ) [Term]
+                    ExprMinusFlag(
+                    ) [ExprMinusFlag]
+                    NoOptAddTerm(
+                    ) [NoOptAddTerm]
+                  ) [Expr]
+                ) [OrAssignExpr]
+              ) [DesStmtE]
+            ) [DesStm]
+          ) [MatchedStmt]
+        ) [StmtList]
+        MatchedStmt(
+          ForArr(
+            ForModBegin(
+              ForStart(
+              ) [ForStart]
+              ForVar(
+               a
+              ) [ForVar]
+              ForArrayMod(
+               niz
+              ) [ForArrayMod]
+            ) [ForModBegin]
+            StmtStmt(
+              StmtList(
+                NoStmtList(
+                ) [NoStmtList]
+                MatchedStmt(
+                  StmtPrint(
+                    Expr(
+                      NoAdditMinus(
+                      ) [NoAdditMinus]
+                      Term(
+                        FactorIdent(
+                          DesignatorM(
+                            DesMatch(
+                              DesPom(
+                               a
+                              ) [DesPom]
+                              NoOptDesignOpp(
+                              ) [NoOptDesignOpp]
+                            ) [DesMatch]
+                          ) [DesignatorM]
+                        ) [FactorIdent]
+                        NoOptTermMul(
+                        ) [NoOptTermMul]
+                      ) [Term]
+                      ExprMinusFlag(
+                      ) [ExprMinusFlag]
+                      NoOptAddTerm(
+                      ) [NoOptAddTerm]
+                    ) [Expr]
+                    NoAddPrintN(
+                    ) [NoAddPrintN]
+                  ) [StmtPrint]
+                ) [MatchedStmt]
+              ) [StmtList]
+            ) [StmtStmt]
+          ) [ForArr]
+        ) [MatchedStmt]
+      ) [StmtList]
+    ) [MethodDecl]
+  ) [MethDeclL]
+) [Program]
+INFO  21:48:49,388 - ===================================
+INFO  21:48:49,400 - Tip: int je definisan na liniji 5
+INFO  21:48:49,401 - Globalna promenljiva: i je dodata u tabelu simbola. na liniji 5
+INFO  21:48:49,401 - Tip: bool je definisan na liniji 6
+INFO  21:48:49,401 - Globalna promenljiva: ibool je dodata u tabelu simbola. na liniji 6
+INFO  21:48:49,401 - Tip: int je definisan na liniji 8
+INFO  21:48:49,401 - Globalna promenjliva tipa niz: niz2 je dodata u tableu simbola. na liniji 8
+INFO  21:48:49,401 - Globalna promenjliva tipa niz: niz je dodata u tableu simbola. na liniji 8
+INFO  21:48:49,402 - Tip: int je definisan na liniji 9
+INFO  21:48:49,402 - Globalna promenljiva: b je dodata u tabelu simbola. na liniji 4
+INFO  21:48:49,402 - Globalna promenljiva: c je dodata u tabelu simbola. na liniji 4
+INFO  21:48:49,402 - Globalna promenljiva: d je dodata u tabelu simbola. na liniji 4
+INFO  21:48:49,402 - Globalna promenljiva: curr je dodata u tabelu simbola. na liniji 4
+INFO  21:48:49,403 - Globalna promenljiva: a je dodata u tabelu simbola. na liniji 9
+INFO  21:48:49,403 - Tip: bool je definisan na liniji 14
+INFO  21:48:49,403 - Dodata metoda koja je globalna na liniji 14
+INFO  21:48:49,404 - ---------Otkriveno slovo : v na liniji 15
+INFO  21:48:49,404 - #######################Factor je tipa:2 naziv na liniji 15
+INFO  21:48:49,404 - Tip prvog je:2 a drugog je:1 na liniji 15
+INFO  21:48:49,404 - $$$$$$$$$$$$$$$$$$$Tip izraza je:2 na liniji 7
+INFO  21:48:49,404 - #######################Factor je tipa:5 naziv na liniji 16
+INFO  21:48:49,404 - Tip prvog je:5 a drugog je:1 na liniji 16
+INFO  21:48:49,404 - $$$$$$$$$$$$$$$$$$$Tip izraza je:5 na liniji 2
+INFO  21:48:49,406 - Naisao na RETURN na liniji 2
+INFO  21:48:49,406 - Obidjen return stmt na liniji 2
+INFO  21:48:49,407 - Dodata metoda koja je globalna na liniji 19
+INFO  21:48:49,407 - ---------Otkriveno slovo : a na liniji 21
+INFO  21:48:49,407 - #######################Factor je tipa:2 naziv na liniji 21
+INFO  21:48:49,407 - Tip prvog je:2 a drugog je:1 na liniji 21
+INFO  21:48:49,407 - $$$$$$$$$$$$$$$$$$$Tip izraza je:2 na liniji 7
+INFO  21:48:49,408 - Promenljivoj koja je po tipu: rs.etf.pp1.symboltable.concepts.Obj@6276ae343 na liniji 22
+INFO  21:48:49,410 - ????????????????????null [rs.etf.pp1.symboltable.concepts.Obj@6276ae34]  niz2 na liniji 22
+INFO  21:48:49,411 - Tip: int je definisan na liniji 22
+INFO  21:48:49,411 - ---------Otkrivena konstanta int: 4 na liniji 22
+INFO  21:48:49,411 - #######################Factor je tipa:1 naziv na liniji 22
+INFO  21:48:49,412 - Tip prvog je:1 a drugog je:1 na liniji 22
+INFO  21:48:49,412 - $$$$$$$$$$$$$$$$$$$Tip izraza je:1 na liniji 14
+INFO  21:48:49,413 - Kreiran je niz objekata tipa:TypeBaseNoColon(
+ int
+) [TypeBaseNoColon] na liniji 14
+INFO  21:48:49,413 - #######################Factor je tipa:3 naziv na liniji 22
+INFO  21:48:49,414 - Tip prvog je:3 a drugog je:1 na liniji 22
+INFO  21:48:49,415 - $$$$$$$$$$$$$$$$$$$Tip izraza je:3 na liniji 6
+INFO  21:48:49,415 - Promenljivoj koja je po tipu: rs.etf.pp1.symboltable.concepts.Obj@3c09711b3 na liniji 23
+INFO  21:48:49,416 - ????????????????????null [rs.etf.pp1.symboltable.concepts.Obj@3c09711b]  niz na liniji 23
+INFO  21:48:49,416 - Tip: int je definisan na liniji 23
+INFO  21:48:49,416 - ---------Otkrivena konstanta int: 8 na liniji 23
+INFO  21:48:49,416 - #######################Factor je tipa:1 naziv na liniji 23
+INFO  21:48:49,416 - Tip prvog je:1 a drugog je:1 na liniji 23
+INFO  21:48:49,417 - $$$$$$$$$$$$$$$$$$$Tip izraza je:1 na liniji 13
+INFO  21:48:49,417 - Kreiran je niz objekata tipa:TypeBaseNoColon(
+ int
+) [TypeBaseNoColon] na liniji 13
+INFO  21:48:49,417 - #######################Factor je tipa:3 naziv na liniji 23
+INFO  21:48:49,417 - Tip prvog je:3 a drugog je:1 na liniji 23
+INFO  21:48:49,417 - $$$$$$$$$$$$$$$$$$$Tip izraza je:3 na liniji 5
+INFO  21:48:49,417 - Promenljivoj koja je po tipu: rs.etf.pp1.symboltable.concepts.Obj@3c09711b3 na liniji 25
+INFO  21:48:49,418 - ????????????????????null [rs.etf.pp1.symboltable.concepts.Obj@3c09711b]  niz na liniji 25
+INFO  21:48:49,418 - ---------Otkrivena konstanta int: 0 na liniji 25
+INFO  21:48:49,418 - #######################Factor je tipa:1 naziv na liniji 25
+INFO  21:48:49,419 - Tip prvog je:1 a drugog je:1 na liniji 25
+INFO  21:48:49,419 - $$$$$$$$$$$$$$$$$$$Tip izraza je:1 na liniji 5
+INFO  21:48:49,419 - ---------Otkrivena konstanta int: 1 na liniji 25
+INFO  21:48:49,420 - #######################Factor je tipa:1 naziv na liniji 25
+INFO  21:48:49,420 - Tip prvog je:1 a drugog je:1 na liniji 25
+INFO  21:48:49,420 - $$$$$$$$$$$$$$$$$$$Tip izraza je:1 na liniji 8
+INFO  21:48:49,420 - Promenljivoj koja je po tipu: rs.etf.pp1.symboltable.concepts.Obj@3c09711b3 na liniji 26
+INFO  21:48:49,420 - ????????????????????null [rs.etf.pp1.symboltable.concepts.Obj@3c09711b]  niz na liniji 26
+INFO  21:48:49,421 - ---------Otkrivena konstanta int: 1 na liniji 26
+INFO  21:48:49,421 - #######################Factor je tipa:1 naziv na liniji 26
+INFO  21:48:49,421 - Tip prvog je:1 a drugog je:1 na liniji 26
+INFO  21:48:49,421 - $$$$$$$$$$$$$$$$$$$Tip izraza je:1 na liniji 5
+INFO  21:48:49,421 - ---------Otkrivena konstanta int: 2 na liniji 26
+INFO  21:48:49,422 - #######################Factor je tipa:1 naziv na liniji 26
+INFO  21:48:49,422 - Tip prvog je:1 a drugog je:1 na liniji 26
+INFO  21:48:49,422 - $$$$$$$$$$$$$$$$$$$Tip izraza je:1 na liniji 8
+INFO  21:48:49,423 - Promenljivoj koja je po tipu: rs.etf.pp1.symboltable.concepts.Obj@3c09711b3 na liniji 27
+INFO  21:48:49,424 - ????????????????????null [rs.etf.pp1.symboltable.concepts.Obj@3c09711b]  niz na liniji 27
+INFO  21:48:49,424 - ---------Otkrivena konstanta int: 2 na liniji 27
+INFO  21:48:49,424 - #######################Factor je tipa:1 naziv na liniji 27
+INFO  21:48:49,425 - Tip prvog je:1 a drugog je:1 na liniji 27
+INFO  21:48:49,425 - $$$$$$$$$$$$$$$$$$$Tip izraza je:1 na liniji 5
+INFO  21:48:49,425 - ---------Otkrivena konstanta int: 3 na liniji 27
+INFO  21:48:49,425 - #######################Factor je tipa:1 naziv na liniji 27
+INFO  21:48:49,425 - Tip prvog je:1 a drugog je:1 na liniji 27
+INFO  21:48:49,425 - $$$$$$$$$$$$$$$$$$$Tip izraza je:1 na liniji 8
+INFO  21:48:49,425 - Promenljivoj koja je po tipu: rs.etf.pp1.symboltable.concepts.Obj@3c09711b3 na liniji 28
+INFO  21:48:49,426 - ????????????????????null [rs.etf.pp1.symboltable.concepts.Obj@3c09711b]  niz na liniji 28
+INFO  21:48:49,427 - ---------Otkrivena konstanta int: 3 na liniji 28
+INFO  21:48:49,427 - #######################Factor je tipa:1 naziv na liniji 28
+INFO  21:48:49,427 - Tip prvog je:1 a drugog je:1 na liniji 28
+INFO  21:48:49,428 - $$$$$$$$$$$$$$$$$$$Tip izraza je:1 na liniji 5
+INFO  21:48:49,428 - ---------Otkrivena konstanta int: 4 na liniji 28
+INFO  21:48:49,428 - #######################Factor je tipa:1 naziv na liniji 28
+INFO  21:48:49,428 - Tip prvog je:1 a drugog je:1 na liniji 28
+INFO  21:48:49,429 - $$$$$$$$$$$$$$$$$$$Tip izraza je:1 na liniji 8
+INFO  21:48:49,430 - Promenljivoj koja je po tipu: rs.etf.pp1.symboltable.concepts.Obj@3c09711b3 na liniji 29
+INFO  21:48:49,430 - ????????????????????null [rs.etf.pp1.symboltable.concepts.Obj@3c09711b]  niz na liniji 29
+INFO  21:48:49,430 - ---------Otkrivena konstanta int: 4 na liniji 29
+INFO  21:48:49,430 - #######################Factor je tipa:1 naziv na liniji 29
+INFO  21:48:49,431 - Tip prvog je:1 a drugog je:1 na liniji 29
+INFO  21:48:49,431 - $$$$$$$$$$$$$$$$$$$Tip izraza je:1 na liniji 5
+INFO  21:48:49,431 - ---------Otkrivena konstanta int: 5 na liniji 29
+INFO  21:48:49,431 - #######################Factor je tipa:1 naziv na liniji 29
+INFO  21:48:49,431 - Tip prvog je:1 a drugog je:1 na liniji 29
+INFO  21:48:49,431 - $$$$$$$$$$$$$$$$$$$Tip izraza je:1 na liniji 8
+INFO  21:48:49,432 - Promenljivoj koja je po tipu: rs.etf.pp1.symboltable.concepts.Obj@3c09711b3 na liniji 30
+INFO  21:48:49,432 - ????????????????????null [rs.etf.pp1.symboltable.concepts.Obj@3c09711b]  niz na liniji 30
+INFO  21:48:49,433 - ---------Otkrivena konstanta int: 5 na liniji 30
+INFO  21:48:49,433 - #######################Factor je tipa:1 naziv na liniji 30
+INFO  21:48:49,433 - Tip prvog je:1 a drugog je:1 na liniji 30
+INFO  21:48:49,433 - $$$$$$$$$$$$$$$$$$$Tip izraza je:1 na liniji 5
+INFO  21:48:49,434 - ---------Otkrivena konstanta int: 6 na liniji 30
+INFO  21:48:49,434 - #######################Factor je tipa:1 naziv na liniji 30
+INFO  21:48:49,434 - Tip prvog je:1 a drugog je:1 na liniji 30
+INFO  21:48:49,434 - $$$$$$$$$$$$$$$$$$$Tip izraza je:1 na liniji 8
+INFO  21:48:49,435 - Promenljivoj koja je po tipu: rs.etf.pp1.symboltable.concepts.Obj@5cc7c2a61 na liniji 35
+INFO  21:48:49,435 - ????????????????????null [rs.etf.pp1.symboltable.concepts.Obj@5cc7c2a6]  a na liniji 35
+INFO  21:48:49,435 - #######################Factor je tipa:1 naziv na liniji 35
+INFO  21:48:49,436 - Tip prvog je:1 a drugog je:1 na liniji 35
+INFO  21:48:49,436 - $$$$$$$$$$$$$$$$$$$Tip izraza je:1 na liniji 8
+INFO  21:48:49,436 - Nvars je:11 na liniji 3
+INFO  21:48:49,437 -  Print count calls = 0
+INFO  21:48:49,437 -  Deklarisanih promenljivih ima = 0
+INFO  21:48:49,437 - Deklarisanih konstanti ima = 0
+INFO  21:48:49,437 - =======================================
+INFO  21:48:49,452 - Parsiranje uspesno zavrseno!

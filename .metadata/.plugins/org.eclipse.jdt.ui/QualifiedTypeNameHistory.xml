@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.ConstType"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.ConstNum"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.ConstChar"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.ConstBool"/>
+    <fullyQualifiedTypeName name="rs.etf.pp1.symboltable.Tab"/>
+    <fullyQualifiedTypeName name="javax.swing.text.StyledEditorKit"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.OrAssignExpr"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.OrIncrement"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.OrDecrement"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.NoOptTermMul"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.Namespace"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.DesMatch"/>
+    <fullyQualifiedTypeName name="rs.etf.pp1.symboltable.concepts.Scope"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.StmtPrint"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.AddExpr"/>
+    <fullyQualifiedTypeName name="java.util.List"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.OrActPars"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.CounterVisitor.VarCounter"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.RelNotEq"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.RelGrt"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.RelGrtEq"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.CounterVisitor"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.ForFlag"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.SyntaxNode"/>
+    <fullyQualifiedTypeName name="java.util.ArrayList"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.CodeGenerator"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.FactorDesign"/>
+    <fullyQualifiedTypeName name="java.util.HashMap"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.DesStmtH"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.OptDesignOpp"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.SemanticAnalyzer"/>
+    <fullyQualifiedTypeName name="rs.etf.pp1.symboltable.concepts.Struct"/>
+    <fullyQualifiedTypeName name="rs.ac.bg.etf.pp1.ast.FeVar"/>
+    <fullyQualifiedTypeName name="rs.etf.pp1.symboltable.concepts.Obj"/>
+    <fullyQualifiedTypeName name="rs.etf.pp1.mj.runtime.Code"/>
+    <fullyQualifiedTypeName name="java.util.Stack"/>
+</qualifiedTypeNameHistroy>
